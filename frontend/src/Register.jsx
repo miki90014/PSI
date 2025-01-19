@@ -1,3 +1,55 @@
+import { useState } from "react";
+//import {cognitoSignUp} from "./cognito";
+
 export function Register() {
-  return <p>Register</p>;
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  return (
+    <div className="register">
+      <div className="register-form">
+        <h1>Register</h1>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log({ username, email, password });
+            //cognitoSignUp here
+          }}
+        >
+          <label htmlFor="username">Username:</label>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <br />
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <br />
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br />
+          <button type="submit">Register</button>
+        </form>
+        <button
+          className="back-to-login-btn"
+          onClick={() => console.log("backToLogin")}
+        >
+          Back to login
+        </button>
+      </div>
+    </div>
+  );
 }
