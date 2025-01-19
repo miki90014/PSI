@@ -1,14 +1,17 @@
+import React from "react";
+import { Link } from "react-router";
+
 export function ReservationsView() {
   return (
     <div className="reservations-view-side">
       <div className="nav-bar">
-        <a href="/client">Strona główna</a>
-        <a href="/client">Repertuar</a>
-        <a href="/client">Nasze kina</a>
-        <a className="active" href="/client/login/reservations">
+        <Link to="/client">Strona główna</Link>
+        <Link to="/client">Repertuar</Link>
+        <Link to="/client">Nasze kina</Link>
+        <Link className="active" to="/client/login/reservations">
           Bilety
-        </a>
-        <a href="/client/login/userdata">Moje konto</a>
+        </Link>
+        <Link to="/client/login/userdata">Moje konto</Link>
       </div>
       <div className="reservations-view">
         <h3>Twoje rezerwacje</h3>

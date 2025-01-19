@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router";
 
 export function UserData() {
   const [names, setNames] = useState("");
@@ -6,16 +7,17 @@ export function UserData() {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   return (
     <div className="user-data-page">
       <div className="nav-bar">
-        <a href="/client">Strona główna</a>
-        <a href="/client">Repertuar</a>
-        <a href="/client">Nasze kina</a>
-        <a href="reservations">Bilety</a>
-        <a className="active" href="/client/login/userdata">
+        <Link to="/client">Strona główna</Link>
+        <Link to="/client">Repertuar</Link>
+        <Link to="/client">Nasze kina</Link>
+        <Link to="/client/login/reservations">Bilety</Link>
+        <Link className="active" to="/client/login/userdata">
           Moje konto
-        </a>
+        </Link>
       </div>
       <div className="user-data-form">
         <h3>Dane osobowe</h3>
@@ -32,45 +34,37 @@ export function UserData() {
           }}
         >
           <label htmlFor="names">Imię i nazwisko</label>
-          <input
-            type="text"
-            value={names}
-            onChange={(e) => setNames(e.target.value)}
-          ></input>
+          {isEditing ? <input type="text" value={names} onChange={(e) => setNames(e.target.value)}></input> : <p>{names}</p>}
           <br />
           <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></input>
+          {isEditing ? <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input> : <p>{email}</p>}
           <br />
-          <label htmlFor="password">Stare hasło</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></input>
+          <label htmlFor="password">{isEditing ? "Stare hasło" : "Hasło"}</label>
+          {isEditing ? <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input> : <p>********</p>}
           <br />
-          <label htmlFor="newPassword">Nowe hasło</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          ></input>
+          {isEditing ? (
+            <>
+              <label htmlFor="newPassword">Nowe hasło</label>
+              <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}></input>
+              <br />
+              <label htmlFor="confirmNewPassword">Potwierdź nowe hasło</label>
+              <input type="password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)}></input>
+            </>
+          ) : null}
           <br />
-          <label htmlFor="confirmNewPassword">Potwierdź nowe hasło</label>
-          <input
-            type="password"
-            value={confirmNewPassword}
-            onChange={(e) => setConfirmNewPassword(e.target.value)}
-          ></input>
-          <br />
-          <button type="submit">Zapisz</button>
+          {isEditing ? (
+            <button type="submit">Zapisz</button>
+          ) : (
+            <button type="button" className="edit-btn" onClick={() => setIsEditing(true)}>
+              Edytuj
+            </button>
+          )}
         </form>
-        <button className="cancel-btn" onClick={() => console.log("cancel")}>
-          Anuluj
-        </button>
+        {isEditing ? (
+          <button type="button" className="cancel-btn" onClick={() => setIsEditing(false)}>
+            Anuluj
+          </button>
+        ) : null}
       </div>
     </div>
   );
