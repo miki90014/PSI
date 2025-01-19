@@ -24,6 +24,7 @@ export function UserData() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            setIsEditing(false);
             console.log({
               names,
               email,
@@ -52,13 +53,12 @@ export function UserData() {
             </>
           ) : null}
           <br />
-          {isEditing ? (
-            <button type="submit">Zapisz</button>
-          ) : (
+          {isEditing ? <button type="submit">Zapisz</button> : null}
+          {!isEditing ? (
             <button type="button" className="edit-btn" onClick={() => setIsEditing(true)}>
               Edytuj
             </button>
-          )}
+          ) : null}
         </form>
         {isEditing ? (
           <button type="button" className="cancel-btn" onClick={() => setIsEditing(false)}>
