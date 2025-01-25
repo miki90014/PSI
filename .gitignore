@@ -1,0 +1,8 @@
+.vscode/settings.json
+.idea/
+
+
+# Python
+__pycache__/
+.venv/
+
