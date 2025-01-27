@@ -5,7 +5,7 @@ import { Login } from "./Login.jsx";
 import { Home } from "./Home.jsx";
 import { Register } from "./Register.jsx";
 import { UserData } from "./UserData.jsx";
-import { ReservationsView } from "./ReservationsView.jsx";
+import { TicketsView } from "./TicketsView.jsx";
 import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 
@@ -23,7 +23,7 @@ function Main() {
           <Route path="login">
             <Route index element={<Login setAccessToken={setAccessToken} />} />
             <Route path="userdata" element={<UserData accessToken={accessToken} />} />
-            <Route path="reservations" element={<ReservationsView accessToken={accessToken} />} />
+            <Route path="reservations" element={<TicketsView accessToken={accessToken} />} />
           </Route>
           <Route path="register" element={<Register />} />
         </Route>

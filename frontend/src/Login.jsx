@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { cognitoLogin } from "./cognito";
+import { useNavigate } from "react-router";
 
 export function Login({ setAccessToken }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div className="login-page">
@@ -24,14 +26,14 @@ export function Login({ setAccessToken }) {
           <label htmlFor="username">Username:</label>
           <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
           <br />
-          <label htmlFor="password">Passowrd:</label>
+          <label htmlFor="password">Password:</label>
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <br />
-          <button type="submit" onClick={() => console.log("login")}>
+          <button type="submit" onClick={() => navigate("/client/login/userdata")}>
             Login
           </button>
         </form>
-        <button className="register-btn" onClick={() => console.log("register")}>
+        <button className="register-btn" onClick={() => navigate("/client/register")}>
           Register
         </button>
       </div>

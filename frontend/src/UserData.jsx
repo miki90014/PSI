@@ -1,13 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { cognitoChangePassword, cognitoChangeUserAttributes, cognitoGetUserData } from "./cognito";
 
-export function UserData() {
+export function UserData({ accessToken }) {
   const [names, setNames] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (accessToken) {
+      cognitoGetUserData(accessToken).then((result) => {
+        console.log(result);
+        let name = "";
+        let email = "";
+        result.UserAttributes.forEach((attr) => {
+          if (attr.Name === "name") {
+            name = attr.Value;
+          }
+          if (attr.Name === "email") {
+            email = attr.Value;
+          }
+        });
+        setNames(name);
+        setUsername(result.Username);
+        setEmail(email);
+      });
+    }
+  }, [accessToken]);
   return (
     <div className="user-data-page">
       <div className="nav-bar">
@@ -32,11 +55,26 @@ export function UserData() {
               newPassword,
               confirmNewPassword,
             });
+            if (email) {
+              cognitoChangeUserAttributes(accessToken, email, names).then((result) => {
+                console.log(result);
+              });
+            }
+            if (password && newPassword && confirmNewPassword && newPassword === confirmNewPassword) {
+              cognitoChangePassword(accessToken, password, newPassword).then((result) => {
+                console.log(result);
+              });
+            }
+            setPassword("");
+            setNewPassword("");
+            setConfirmNewPassword("");
           }}
         >
           <label htmlFor="names">Imię i nazwisko</label>
           {isEditing ? <input type="text" value={names} onChange={(e) => setNames(e.target.value)}></input> : <p>{names}</p>}
           <br />
+          <label htmlFor="username">Nazwa użytkownika</label>
+          <p>{username}</p>
           <label htmlFor="email">Email</label>
           {isEditing ? <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input> : <p>{email}</p>}
           <br />
@@ -61,7 +99,16 @@ export function UserData() {
           ) : null}
         </form>
         {isEditing ? (
-          <button type="button" className="cancel-btn" onClick={() => setIsEditing(false)}>
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={() => {
+              setIsEditing(false);
+              setPassword("");
+              setNewPassword("");
+              setConfirmNewPassword("");
+            }}
+          >
             Anuluj
           </button>
         ) : null}

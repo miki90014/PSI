@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { cognitoSignUp } from "./cognito";
+import { useNavigate } from "react-router";
 
 export function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigate();
 
   return (
     <div className="register">
@@ -18,6 +20,7 @@ export function Register() {
               .then((result) => {
                 console.log(result);
                 window.alert("Registered successfully");
+                navigation("/client/login");
               })
               .catch((error) => window.alert(error.message));
           }}
@@ -33,7 +36,7 @@ export function Register() {
           <br />
           <button type="submit">Register</button>
         </form>
-        <button className="back-to-login-btn" onClick={() => console.log("backToLogin")}>
+        <button className="back-to-login-btn" onClick={() => navigation("/client/login")}>
           Back to login
         </button>
       </div>
