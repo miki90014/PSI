@@ -82,10 +82,10 @@ class DatabaseHandler:
             logger.error(f"Error executing query: {e}")
             self.connection.rollback()
 
-    def execute_query_and_fetch_result(self, query):
+    def execute_query_and_fetch_result(self, query, params=None):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute(query)
+                cursor.execute(query, params)
                 self.connection.commit()
                 logger.info("The query was completed successfully.")
                 return cursor.fetchall()

@@ -53,3 +53,12 @@ def get_available_seats_of_show(id):
         seat_data.append(seat_dict)
 
     return seat_data
+
+@api.route("/reservation/<client>", methods=["GET"])
+def get_all_reservations(client):
+    from main import db_service
+    #TODO:Verify JWT token
+    reservations = db_service.get_all_reservations(client)
+    logger.info("Fetched all reservations.")
+
+    return reservations
