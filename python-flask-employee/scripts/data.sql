@@ -27,5 +27,5 @@ INSERT INTO "Movie" ("title", "duration", "description", "imageURL", "release_da
 ('The Hangover', 100, 'A comedy about a wild bachelor party', 'hangover.jpg', '2009-06-05', 'Bradley Cooper', 'Todd Phillips', 2, 2);
 
 INSERT INTO "Program" ("start_date", "end_date", "CinemaID") VALUES
-('2024-06-01', '2024-06-30', 1),
-('2024-07-01', '2024-07-31', 2);
+('2025-01-01', '2025-06-30', 1),
+('2025-01-01', '2025-07-31', 2);

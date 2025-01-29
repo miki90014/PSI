@@ -1,6 +1,6 @@
 INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID") VALUES
-('2024-06-10', 15, 1, 1, 1),
-('2024-06-15', 20, 2, 2, 2);
+('2025-02-10 14:00:00', 15, 1, 1, 1),
+('2025-02-15 16:30:00', 20, 2, 2, 2);
 
 INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID") VALUES
 ('T', 1, 1),
@@ -36,6 +36,6 @@ INSERT INTO "CanceledTicket" ("bank_account", "date", "TicketReservationID") VAL
 ('123456789', '2024-06-20', 1);
 
 INSERT INTO "Form" ("movieFormName") VALUES
-("3D"),
-("2D Dubbing"),
-("2D Subbtitles");
+('3D'),
+('2D Dubbing'),
+('2D Subbtitles');

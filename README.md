@@ -12,9 +12,9 @@ There are two separetes db in our repo: customer and employee. Below is instruct
 export POSTGRES_USER="admin"
 export POSTGRES_PASSWORD="admin"
 export POSTGRES_DB="employee"
-export DATABASE_URL="postgresql://admin:admin@localhost:5400/${POSTGRES_DB}"
+export DATABASE_URL="postgresql://admin:admin@localhost:5400/${POSTGRES_DB}" #port 5432 for Customer DB
 export PORT=5000
-export SQL_PATH==../scripts/employee.sql
+export SQL_PATH=../scripts/employee.sql #../scripts/customer.sql for Customer DB
 export SQL_DATA_PATH=../scripts/data.sql
 ```
 

@@ -5,20 +5,50 @@ import { Container, Row, Col, Spinner, Alert, Card, Form } from 'react-bootstrap
 export function MovieDetails() {
   const { id } = useParams();  // Pobieramy ID filmu z URL
   const [movie, setMovie] = useState(null);
+  const [cinemasAndPrograms, setCinemaAndProgram] = useState(null);
+  const [movieShows, setMovieShows] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
+  const API_BASE_CUSTOMER_URL = import.meta.env.VITE_APP_API_CUSTOMER_BASE_URL;
   console.log(API_BASE_EMPLOYEE_URL);
+
+  const [selectedCinema, setSelectedCinema] = useState("");
+
+  const handleCinemaChange = (event) => {
+    setSelectedCinema(event.target.value);
+  };
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        const response = await fetch(`${API_BASE_EMPLOYEE_URL}/movie/${id}`);
-        if (!response.ok) {
+        const response_movies = await fetch(`${API_BASE_EMPLOYEE_URL}/movie/${id}`);
+        if (!response_movies.ok) {
           throw new Error('Failed to fetch movie details');
         }
-        const data = await response.json();
-        setMovie(data);
+        const data_movies = await response_movies.json();
+        setMovie(data_movies);
+        const response_cinema_and_programs = await fetch(`${API_BASE_EMPLOYEE_URL}/cinema/offers/${data_movies.OfferID}/programs`);
+        if (!response_cinema_and_programs.ok) {
+          throw new Error('Failed to fetch movie program details');
+        }
+        const data_cinemasAndPrograms = await response_cinema_and_programs.json();
+        setCinemaAndProgram(data_cinemasAndPrograms);
+        console.log(data_cinemasAndPrograms)
+        let data_showings = [];
+
+        await Promise.all(data_cinemasAndPrograms.map(async (cinema) => {
+          const response_showing = await fetch(`${API_BASE_CUSTOMER_URL}/showing/program/${cinema.ProgramID}`);
+          
+          if (!response_showing.ok) {
+            throw new Error('Failed to fetch movie program showings');
+          }
+      
+          const data_showing = await response_showing.json();
+          data_showings.push(data_showing);
+        }));
+        console.log("SHOWINGS", data_showings)
+        setMovieShows(data_showings);           
       } catch (err) {
         setError(err.message);
       } finally {
@@ -107,11 +137,52 @@ export function MovieDetails() {
         </Col>
         <Col md={8}>
             <Card className="mb-4">
-            <Card.Body>
-                <Card.Title>Dostępne seanse (Coming soon)</Card.Title>
-                    <Card.Text>
-                      <small>Click to view details</small>
-                    </Card.Text>
+              <Card.Body>
+                <Card.Title>Dostępne seanse</Card.Title>
+
+                {/* Dropdown do wyboru kina */}
+                <Form.Select value={selectedCinema} onChange={handleCinemaChange}>
+                  <option value="">Wybierz kino</option>
+                  {cinemasAndPrograms.map((cinema) => (
+                    <option key={cinema.id} value={cinema.id}>
+                      {cinema.name}
+                    </option>
+                  ))}
+                </Form.Select>
+                  
+                {selectedCinema && (
+                  <ul className="mt-3">
+                    {(() => {
+                      // Znajdujemy ProgramID powiązane z selectedCinema
+                      console.log(cinemasAndPrograms)
+                      const selectedPrograms = cinemasAndPrograms
+                      .filter((cinema) => cinema.name === selectedCinema);
+
+                      console.log("selectedPrograms:", selectedPrograms);
+                      console.log(typeof(selectedPrograms))
+                      console.log("movieShows:", movieShows);
+                      console.log(typeof(movieShows))
+                    
+                      // Filtrowanie movie_shows według ProgramID
+                      const filteredShows = movieShows.filter((showArray) =>
+                        showArray.some((show) => 
+                          selectedPrograms.some((program) => program.ProgramID === show.ProgramID)
+                        )
+                      );
+                      console.log("SHOWS!", filteredShows)
+
+                      return filteredShows.length > 0 ? (
+                        filteredShows.flat().map((show) => (
+                          <li key={show.ShowID}>
+                            {show.Date} - {show.Form} - {show.Price} PLN
+                          </li>
+                        ))
+                      ) : (
+                        <p className="text-muted">Brak dostępnych seansów</p>
+                      );
+                    })()}
+                  </ul>
+                )}
               </Card.Body>
             </Card>
           {/* Możesz tu później dodać listę dostępnych seansów */}
