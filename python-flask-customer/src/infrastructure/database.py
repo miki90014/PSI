@@ -74,12 +74,25 @@ class DatabaseHandler:
 
     def execute_query(self, query):
         try:
-            self.cursor.execute(query)
-            self.connection.commit()
-            logger.info("The query was completed successfully.")
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                self.connection.commit()
+                logger.info("The query was completed successfully.")
         except Exception as e:
             logger.error(f"Error executing query: {e}")
             self.connection.rollback()
+
+    def execute_query_and_fetch_result(self, query):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                self.connection.commit()
+                logger.info("The query was completed successfully.")
+                return cursor.fetchall()
+        except Exception as e:
+            logger.error(f"Error executing query: {e}")
+            self.connection.rollback()
+            return None
 
     def close(self):
         if self.cursor:

@@ -6,7 +6,7 @@ create table if not exists "Form" (
 
 create table if not exists "Showing" (
     "ID" serial not null,
-    "Date" date not null,
+    "Date" timestamp not null,
     "Price" int4 not null,
     "FormID" int4 not null,
     "ProgramID" int4 not null,

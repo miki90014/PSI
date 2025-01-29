@@ -33,6 +33,7 @@ def list_movie(id):
     logger.info(f"Fetched movie from database.")
     print(len(movie))
     print(type(movie))
+    print(movie)
     return {
         "ID": movie[0],
         "title": movie[1],
@@ -43,9 +44,28 @@ def list_movie(id):
         "cast": movie[6],
         "director": movie[7],
         "Genre": movie[8],
+        "OfferID": movie[9],
     }
 
 
 @api.route("/image/<image>", methods=["GET"])
 def host_image(image):
     return send_from_directory("static/images", image)
+
+
+@api.route("/cinema/offers/<id>/programs", methods=["GET"])
+def get_cinemas_programs(id):
+    from main import db_service
+
+    cinemas = db_service.get_cinemas_and_thier_active_programs(id)
+    logger.info(f"Fetched cinemas programs of offer id: {id}.")
+    cinema_data = []
+    for cinema in cinemas:
+        cinema_dict = {
+            "CinemaID": cinema[0],
+            "name": cinema[1],
+            "address": cinema[2],
+            "ProgramID": cinema[3],
+        }
+        cinema_data.append(cinema_dict)
+    return cinema_data
