@@ -29,8 +29,3 @@ INSERT INTO "Movie" ("title", "duration", "description", "imageURL", "release_da
 INSERT INTO "Program" ("start_date", "end_date", "CinemaID") VALUES
 ('2024-06-01', '2024-06-30', 1),
 ('2024-07-01', '2024-07-31', 2);
-
-INSERT INTO "Form" ("movieFormName") VALUES
-("3D"),
-("2D Dubbing"),
-("2D Subbtitles");

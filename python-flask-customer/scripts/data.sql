@@ -34,3 +34,8 @@ INSERT INTO "Ticket" ("ReservationID", "PaymentID", "date", "TypeID", "to_be_pai
 
 INSERT INTO "CanceledTicket" ("bank_account", "date", "TicketReservationID") VALUES
 ('123456789', '2024-06-20', 1);
+
+INSERT INTO "Form" ("movieFormName") VALUES
+("3D"),
+("2D Dubbing"),
+("2D Subbtitles");

@@ -1,6 +1,6 @@
 create table if not exists "Form" (
     "ID" serial not null,
-    "movieFormName" int4 not null unique,
+    "movieFormName" varchar(255) not null unique,
     primary key ("ID")
 );
 
