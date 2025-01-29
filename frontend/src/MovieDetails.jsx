@@ -7,11 +7,13 @@ export function MovieDetails() {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
+  console.log(API_BASE_EMPLOYEE_URL);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/movie/${id}`);
+        const response = await fetch(`${API_BASE_EMPLOYEE_URL}/movie/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch movie details');
         }
@@ -47,7 +49,7 @@ export function MovieDetails() {
   }
 
   if (!movie) {
-    return <div>No movie found</div>;
+    return <div>Nie znaleziono filmu</div>;
   }
 
   return (
@@ -57,7 +59,7 @@ export function MovieDetails() {
         <Col md={3}>
           <Card.Img
             variant="top"
-            src={`http://localhost:5000/image/${movie.imageURL}`}
+            src={`${API_BASE_EMPLOYEE_URL}/image/${movie.imageURL}`}
             alt={movie.title}
             style={{ width: '200px', height: '500px;', objectFit: 'cover' }}
           />
@@ -66,18 +68,18 @@ export function MovieDetails() {
         {/* Szczegóły filmu po prawej stronie */}
         <Col md={8}>
           <h1>{movie.title}</h1>
-          <p><strong>Duration:</strong> {movie.duration} min</p>
-          <p><strong>Description:</strong> {movie.description}</p>
-          <p><strong>Cast:</strong> {movie.cast}</p>
-          <p><strong>Director:</strong> {movie.director}</p>
-          <p><strong>Genre:</strong> {movie.Genre}</p>
-          <p><strong>Release Date:</strong> {movie.release_date}</p>
+          <p><strong>Czas trwania:</strong> {movie.duration} min</p>
+          <p><strong>Opis:</strong> {movie.description}</p>
+          <p><strong>Obsada:</strong> {movie.cast}</p>
+          <p><strong>Reżyser:</strong> {movie.director}</p>
+          <p><strong>Gatunek:</strong> {movie.Genre}</p>
+          <p><strong>Data premiery:</strong> {movie.release_date}</p>
         </Col>
       </Row>
       <Row className="my-4">
         <Col md={3}>
-          <h4>Subscriptions</h4>
-          <p>You like this kind of movie? <br></br> Subsribe to be up to date!</p>
+          <h4>Subskrypcje</h4>
+          <p>Podoba ci się taki rodzaj filmu? <br></br> Zasubskrubyj aby być na bieżąco!</p>
           <Form>
             <Form.Check // prettier-ignore
                 type="switch"
@@ -106,7 +108,7 @@ export function MovieDetails() {
         <Col md={8}>
             <Card className="mb-4">
             <Card.Body>
-                <Card.Title>Available Showtimes (Coming soon)</Card.Title>
+                <Card.Title>Dostępne seanse (Coming soon)</Card.Title>
                     <Card.Text>
                       <small>Click to view details</small>
                     </Card.Text>

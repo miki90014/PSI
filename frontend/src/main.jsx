@@ -9,6 +9,7 @@ import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Router>

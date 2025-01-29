@@ -6,15 +6,17 @@ export function Home() {
   const [movies, setMovies] = useState([]);  // Stan na przechowywanie listy filmów
   const [loading, setLoading] = useState(true); // Stan na kontrolowanie ładowania danych
   const [error, setError] = useState(null); // Stan na błędy
+  const API_BASE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
+  console.log(API_BASE_URL);
 
   // Fetch data when the component is mounted
   useEffect(() => {
     // Funkcja do pobrania danych z API
     const fetchMovies = async () => {
       try {
-        const response = await fetch('http://localhost:5000/movies'); // Upewnij się, że API działa na tym porcie
+        const response = await fetch(`${API_BASE_URL}/movies`); // Upewnij się, że API działa na tym porcie
         if (!response.ok) {
-          throw new Error('Failed to fetch movies');
+          throw new Error('Nie udało się pobrać filmów');
         }
         const data = await response.json();
         setMovies(data);
@@ -50,17 +52,17 @@ export function Home() {
 
   return (
     <Container>
-      <h1 className="my-4 text-center">Movies</h1>
+      <h1 className="my-4 text-center">Filmy</h1>
       <Row>
         {movies.map((movie) => (
           <Col key={movie.ID} xs={12} md={6} lg={4}>
             <Card className="mb-4">
-                <Card.Img variant="top" src={`http://localhost:5000/image/${movie.imageURL}`} alt={movie.title} height="600px;" style={{ objectFit: 'cover' }}/>
+                <Card.Img variant="top" src={`${API_BASE_URL}/image/${movie.imageURL}`} alt={movie.title} height="600px;" style={{ objectFit: 'cover' }}/>
               <Card.Body>
                 <Card.Title>{movie.title}</Card.Title>
                 <Link to={`/movie/${movie.ID}`}>
                     <Card.Text>
-                      <small>Click to view details</small>
+                      <small>Kliknij tutaj aby zobaczyć szczegóły</small>
                     </Card.Text>
                 </Link>
               </Card.Body>
