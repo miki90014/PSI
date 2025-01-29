@@ -5,20 +5,19 @@ ENV POSTGRES_USER=${POSTGRES_USER}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 ENV SQL_PATH=/usr/src/app/customer.sql
 ENV SQL_DATA_PATH=/usr/src/app/data.sql
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    gcc
 WORKDIR /usr/src/app
 COPY ./requirements.txt ./
+RUN pip install -r requirements.txt
 COPY scripts/customer.sql ./
 COPY scripts/data.sql ./
 
 # RUN mkdir -p /root/.aws
 # COPY credentials /root/.aws/credentials
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    gcc
-
-RUN pip install -r requirements.txt
 COPY src ./
 EXPOSE ${BACKEND_PORT}
 CMD ["python", "main.py"]
