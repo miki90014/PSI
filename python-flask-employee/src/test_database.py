@@ -44,38 +44,6 @@ class TestDatabaseHandler(unittest.TestCase):
         "builtins.open", new_callable=unittest.mock.mock_open, read_data="SQL script"
     )
     @patch.object(DatabaseHandler, "_DatabaseHandler__table_exists")
-    def test_prepare_database_create_tables_and_fill_data(
-        self, mock_table_exists, mock_open, mock_connect
-    ):
-        # Arrange
-        mock_connection = MagicMock()
-        mock_connect.return_value = mock_connection
-        db_handler = DatabaseHandler()
-
-        db_handler.execute_query = MagicMock()
-        mock_table_exists.side_effect = lambda table_name: table_name not in TABLE_NAMES
-
-        # Act
-        db_handler.preare_database()
-
-        # Assert
-        self.assertEqual(mock_table_exists.call_count, len(TABLE_NAMES))
-
-        expected_calls = [
-            unittest.mock.call(sql_script_tables_path, "r"),
-            unittest.mock.call(sql_script_mocked_data_path, "r"),
-        ]
-        mock_open.assert_has_calls(expected_calls, any_order=True)
-        self.assertEqual(db_handler.execute_query.call_count, 2)
-        mock_connection.commit.assert_called_once()
-        db_handler.close()
-        mock_connection.close.assert_called_once()
-
-    @patch("psycopg2.connect")
-    @patch(
-        "builtins.open", new_callable=unittest.mock.mock_open, read_data="SQL script"
-    )
-    @patch.object(DatabaseHandler, "_DatabaseHandler__table_exists")
     def test_prepare_database_error_handling(
         self, mock_table_exists, mock_open, mock_connect
     ):

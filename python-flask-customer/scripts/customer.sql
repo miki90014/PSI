@@ -32,6 +32,7 @@ create table if not exists "Reservation" (
 );
 
 create table if not exists "Ticket" (
+    "ID" serial not null,
     "ReservationID" int4 not null,
     "PaymentID" int4 not null,
     "date" int4 not null,
@@ -39,7 +40,7 @@ create table if not exists "Ticket" (
     "to_be_paid" float4 not null,
     "verified" char(1) not null,
     "PaymentStatusID" int4 not null,
-    primary key ("ReservationID")
+    primary key ("ID")
 );
 
 create table if not exists "CanceledTicket" (
@@ -69,7 +70,7 @@ create table if not exists "Subscription" (
 
 create table if not exists "Payment" (
     "ID" serial not null,
-    "name" int4 not null unique,
+    "name" varchar(255) not null unique,
     primary key ("ID")
 );
 
@@ -81,11 +82,9 @@ create table if not exists "Type" (
 
 create table if not exists "PaymentStatus" (
     "ID" serial not null,
-    "name" int4 not null unique,
+    "name" varchar(255) not null unique,
     primary key ("ID")
 );
-
-alter table if exists "Showing" add constraint "FKShowing240496" foreign key ("FormID") references "Form" ("ID");
 
 alter table if exists "AvailableSeats" add constraint "FKAvailableS211883" foreign key ("ShowingID") references "Showing" ("ID");
 alter table if exists "AvailableSeats" add constraint "FKAvailableS723491" foreign key ("ReservationID") references "Reservation" ("ID");
@@ -94,7 +93,7 @@ alter table if exists "Ticket" add constraint "FKTicket622880" foreign key ("Res
 
 alter table if exists "Reservation" add constraint "FKReservatio4788" foreign key ("ClientID") references "Client" ("ID");
 
-alter table if exists "CanceledTicket" add constraint "FKCanceledTi156985" foreign key ("TicketReservationID") references "Ticket" ("ReservationID");
+alter table if exists "CanceledTicket" add constraint "FKCanceledTi156985" foreign key ("TicketReservationID") references "Ticket" ("ID");
 
 alter table if exists "Ticket" add constraint "FKTicket330331" foreign key ("PaymentID") references "Payment" ("ID");
 alter table if exists "Ticket" add constraint "FKTicket562546" foreign key ("TypeID") references "Type" ("ID");

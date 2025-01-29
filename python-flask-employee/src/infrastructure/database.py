@@ -5,13 +5,11 @@ import os
 import logging
 from const import FORMATTER
 from infrastructure.models import TABLE_NAMES
-import sys
 
 db_host_name = os.getenv("DATABASE_URL")
 db_username = os.getenv("POSTGRES_USER")
 db_password = os.getenv("POSTGRES_PASSWORD")
-sql_script_tables_path = os.getenv("SQL_PATH")
-sql_script_mocked_data_path = os.getenv("SQL_DATA_PATH")
+sql_script_path = os.getenv("SQL_PATH")
 
 
 logging.basicConfig(level=logging.INFO)
@@ -34,8 +32,8 @@ class DatabaseHandler:
     def connect(self):
         try:
             self.connection = psycopg2.connect(self.db_url)
-            self.cursor = self.connection.cursor()
             self.connection.autocommit = True
+            self.cursor = self.connection.cursor()
             logger.info("The connection to the database has been established.")
         except OperationalError as e:
             logger.error(f"Error during connetion to the database: {e}")
@@ -59,16 +57,12 @@ class DatabaseHandler:
         if missing_tables:
             logger.info(f"Tables does not exist. Creating tables...")
             try:
-                with open(sql_script_tables_path, "r") as file:
+                with open(sql_script_path, "r") as file:
                     sql_script = file.read()
                 self.connection.autocommit = False
                 self.execute_query(sql_script)
-                logger.info("The tables in database was created using a script.")
-                with open(sql_script_mocked_data_path, "r") as file:
-                    sql_script = file.read()
-                self.execute_query(sql_script)
                 self.connection.commit()
-                logger.info("The tables in database was filled with data.")
+                logger.info("The tables in database was created using a script.")
             except Exception as e:
                 logger.error(f"Error during database tables creation from script: {e}")
 
