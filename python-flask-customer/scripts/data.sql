@@ -4,7 +4,29 @@ INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID") VALUES
 
 INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID") VALUES
 ('T', 1, 1),
-('F', 2, 1);
+('T', 2, 1),
+('T', 3, 1),
+('T', 4, 1),
+('T', 5, 1),
+('T', 6, 1),
+('T', 7, 1),
+('T', 8, 1),
+('T', 9, 1),
+('T', 10, 1),
+('F', 11, 1),
+('F', 12, 1),
+('F', 13, 2),
+('F', 14, 2),
+('F', 15, 2),
+('F', 16, 2),
+('F', 17, 2),
+('F', 18, 2),
+('F', 19, 2),
+('F', 20, 2),
+('F', 21, 2),
+('F', 22, 2),
+('T', 23, 2),
+('T', 24, 2);
 
 INSERT INTO "Client" ("first_name", "last_name", "email", "telephone_number") VALUES
 ('John', 'Doe', 'john.doe@example.com', '123-456-7890'),

@@ -14,8 +14,28 @@ INSERT INTO "Room" ("name", "number", "CinemaID") VALUES
 INSERT INTO "Seat" ("number", "row", "RoomID") VALUES
 (1, 'A', 1),
 (2, 'A', 1),
+(3, 'A', 1),
+(4, 'A', 1),
+(5, 'A', 1),
+(6, 'A', 1),
+(1, 'B', 1),
+(2, 'B', 1),
+(3, 'B', 1),
+(4, 'B', 1),
+(5, 'B', 1),
+(6, 'B', 1),
+(1, 'A', 2),
+(2, 'A', 2),
+(3, 'A', 2),
+(4, 'A', 2),
+(5, 'A', 2),
+(6, 'A', 2),
 (1, 'B', 2),
-(2, 'B', 2);
+(2, 'B', 2),
+(3, 'B', 2),
+(4, 'B', 2),
+(5, 'B', 2),
+(6, 'B', 2);
 
 INSERT INTO "Genre" ("genreName") VALUES
 ('Action'),

@@ -29,3 +29,19 @@ class DatabaseService:
         WHERE '{today}' BETWEEN "Program"."start_date" AND "Program"."end_date" AND "Offer"."ID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+
+    def get_room_name(self, id):
+        query = f"""
+        SELECT "name", "number"
+        FROM "Room"
+        WHERE "Room"."ID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+
+    def get_seats_of_room(self, id):
+        query = f"""
+        SELECT *
+        FROM "Seat"
+        WHERE "Seat"."RoomID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)

@@ -8,3 +8,10 @@ class DatabaseService:
         WHERE "Showing"."ProgramID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+
+    def get_available_seats_of_show(self, id):
+        query = f"""
+        SELECT * FROM "AvailableSeats"
+        WHERE "AvailableSeats"."ShowingID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
