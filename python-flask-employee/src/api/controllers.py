@@ -69,3 +69,28 @@ def get_cinemas_programs(id):
         }
         cinema_data.append(cinema_dict)
     return cinema_data
+
+
+@api.route("/room/<id>", methods=["GET"])
+def get_room_name(id):
+    from main import db_service
+
+    room = db_service.get_room_name(id)[0]
+    logger.info(f"Fetched room of id: {id}.")
+
+    return {"name": room[0], "number": room[1]}
+
+
+@api.route("/seats/<id>", methods=["GET"])
+def get_seats_of_room(id):
+    from main import db_service
+
+    seats = db_service.get_seats_of_room(id)
+    logger.info(f"Fetched seats of room id: {id}.")
+
+    seat_data = []
+    for seat in seats:
+        seat_dict = {"ID": seat[0], "number": seat[1], "row": seat[2]}
+        seat_data.append(seat_dict)
+
+    return seat_data

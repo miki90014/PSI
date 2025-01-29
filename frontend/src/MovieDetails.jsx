@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';  // Hook do pobrania parametrów URL
 import { Container, Row, Col, Spinner, Alert, Card, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom'; 
 
 export function MovieDetails() {
   const { id } = useParams();  // Pobieramy ID filmu z URL
@@ -173,8 +174,17 @@ export function MovieDetails() {
 
                       return filteredShows.length > 0 ? (
                         filteredShows.flat().map((show) => (
-                          <li key={show.ShowID}>
-                            {show.Date} - {show.Form} - {show.Price} PLN
+                          <li key={show.ShowID} className="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                              <span className="font-weight-bold">{show.Date}</span> - {show.Form} - <span className="text-success">{show.Price} PLN</span>
+                            </div>
+                            <Link to={
+                                `/movie-reservation/${show.ShowID}?date=${show.Date}&price=${show.Price}&form=${show.Form}&movieTitle=${movie.title}&roomID=${show.RoomID}&cinemaName=${selectedCinema}&imageURL=${movie.imageURL}`
+                              }>
+                              <button className="btn btn-outline-primary btn-sm">
+                                <i className="bi bi-bookmark-plus"></i> Rezerwuj
+                              </button>
+                            </Link>
                           </li>
                         ))
                       ) : (

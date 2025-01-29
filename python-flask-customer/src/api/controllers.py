@@ -33,3 +33,23 @@ def get_all_showings_for_movie_program(id):
         showing_data.append(show_dict)
 
     return showing_data
+
+
+@api.route("/available_seats/<id>", methods=["GET"])
+def get_available_seats_of_show(id):
+    from main import db_service
+
+    seats = db_service.get_available_seats_of_show(id)
+    logger.info(f"Fetched available seats of show id: {id}.")
+
+    seat_data = []
+    for seat in seats:
+        seat_dict = {
+            "ID": seat[0],
+            "available": seat[1],
+            "seatSeatID": seat[2],
+            "ShowingID": seat[3],
+        }
+        seat_data.append(seat_dict)
+
+    return seat_data

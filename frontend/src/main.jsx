@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { EmployeePanel } from "./EmployeePanel.jsx";
 import { Login } from "./Login.jsx";
 import { Home } from "./Home.jsx";
+import {MovieReservation} from "./MovieReservation.jsx";
 import { MovieDetails } from "./MovieDetails.jsx";
 import { Register } from "./Register.jsx";
 import { UserData } from "./UserData.jsx";
@@ -34,6 +35,7 @@ function Main() {
           <Route index element={<Home />} />
         </Route>
         <Route path="/movie/:id" element={<MovieDetails />} />
+        <Route path="/movie-reservation/:showID" element={<MovieReservation />} />
       </Routes>
     </Router>
   );
