@@ -1,6 +1,6 @@
-INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID") VALUES
-('2025-02-10 14:00:00', 15, 1, 1, 1),
-('2025-02-15 16:30:00', 20, 2, 2, 2);
+INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID", "MovieID") VALUES
+('2025-02-10 14:00:00', 15, 1, 1, 1, 1),
+('2025-02-15 16:30:00', 20, 2, 2, 2, 2);
 
 INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID") VALUES
 ('T', 1, 1),
