@@ -5,8 +5,6 @@ services:
       - "5000:5000"
     environment:
       DATABASE_URL: "postgresql://admin:admin@database-employee:5432/employee"
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
     depends_on:
       database-employee:
         condition: "service_healthy"
@@ -16,16 +14,12 @@ services:
       - "5001:5000"
     environment:
       DATABASE_URL: "postgresql://admin:admin@database-customer:5432/customer"
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
     depends_on:
       database-customer:
         condition: "service_healthy"
 
   database-employee:
     image: postgres:17.2
-    ports:
-      - "5400:5432"
     environment:
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "admin"
@@ -39,8 +33,6 @@ services:
 
   database-customer:
     image: postgres:17.2
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "admin"
