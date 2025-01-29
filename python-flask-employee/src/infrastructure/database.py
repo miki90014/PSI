@@ -9,7 +9,8 @@ from infrastructure.models import TABLE_NAMES
 db_host_name = os.getenv("DATABASE_URL")
 db_username = os.getenv("POSTGRES_USER")
 db_password = os.getenv("POSTGRES_PASSWORD")
-sql_script_path = os.getenv("SQL_PATH")
+sql_script_tables_path = os.getenv("SQL_PATH")
+sql_script_mocked_data_path = os.getenv("SQL_DATA_PATH")
 
 
 logging.basicConfig(level=logging.INFO)
@@ -57,12 +58,17 @@ class DatabaseHandler:
         if missing_tables:
             logger.info(f"Tables does not exist. Creating tables...")
             try:
-                with open(sql_script_path, "r") as file:
+                with open(sql_script_tables_path, "r") as file:
                     sql_script = file.read()
                 self.connection.autocommit = False
                 self.execute_query(sql_script)
                 self.connection.commit()
                 logger.info("The tables in database was created using a script.")
+                with open(sql_script_mocked_data_path, "r") as file:
+                    sql_script = file.read()
+                self.execute_query(sql_script)
+                self.connection.commit()
+                logger.info("The tables in database was filled with data.")
             except Exception as e:
                 logger.error(f"Error during database tables creation from script: {e}")
 
@@ -74,6 +80,17 @@ class DatabaseHandler:
         except Exception as e:
             logger.error(f"Error executing query: {e}")
             self.connection.rollback()
+
+    def execute_query_and_fetch_result(self, query):
+        try:
+            self.cursor.execute(query)
+            self.connection.commit()
+            logger.info("The query was completed successfully.")
+            return self.cursor.fetchall()
+        except Exception as e:
+            logger.error(f"Error executing query: {e}")
+            self.connection.rollback()
+            return None
 
     def close(self):
         if self.cursor:
