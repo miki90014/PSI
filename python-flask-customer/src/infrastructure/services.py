@@ -30,11 +30,33 @@ class DatabaseService:
 
     def get_all_reservations(self, client):
         query = f"""
-        SELECT * FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
+        SELECT "Reservation"."ID", MIN("Showing"."MovieID"),
+        MIN("Showing"."Date"), MIN("Showing"."RoomID"),
+        ARRAY_AGG("AvailableSeats"."SeatseatID"), MIN("Ticket"."to_be_paid")
+        FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
         JOIN "Showing" ON "AvailableSeats"."ShowingID"="Showing"."ID"
-        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s;
+        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s
+        GROUP BY "Reservation"."ID";
         """
-        return self.db_handler.execute_query_and_fetch_result(query, (client,))
+        temp =   self.db_handler.execute_query_and_fetch_result(query, (client,))
+        result = []
+        for i in temp:
+            movieID = i[1]
+            timeStamp = i[2]
+            hallID = i[3]
+            seats = []
+            for j in i[4]:
+                seats.append({"row": "4", "seat": "5"})
+            result.append({
+                "id": i[0],
+                "movie":{ "imageURL":i[1], "title": "Movie Title"},
+                "showingDetails": {"date": str(timeStamp.date()), "hour": str(timeStamp.time())[:-3]},
+                "hall": i[3],
+                "seats": seats,
+                "price": i[5]
+            })
+        return result
+  
 
     def get_payment_servicse(self):
         query = f"""

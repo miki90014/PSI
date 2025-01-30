@@ -14,11 +14,17 @@ const reservations = [
       hour: "123213",
     },
     hall: "5",
-    seat: {
-      //Reservation/AvailableSeats/Seatseat
-      row: "3",
-      seats: "3",
-    },
+    seats: [
+      {
+        //Reservation/AvailableSeats/Seatseat
+        row: "3",
+        seat: "3",
+      },
+      {
+        row: "3",
+        seat: "4",
+      },
+    ],
     price: "29.00",
   },
 ];
@@ -36,11 +42,13 @@ const transactions = [
       hour: "123213",
     },
     hall: "5",
-    seat: {
-      //Reservation/AvailableSeats/Seatseat
-      row: "3",
-      seats: "3",
-    },
+    seats: [
+      {
+        //Reservation/AvailableSeats/Seatseat
+        row: "3",
+        seat: "3",
+      },
+    ],
     price: "29.00",
   },
 ];
@@ -56,8 +64,12 @@ export function TicketsView() {
         <p className="movie-date">{reservation.showingDetails.date}</p>
         <p className="movie-hour">{reservation.showingDetails.hour}</p>
         <p className="movie-hall">Sala: {reservation.hall}</p>
-        <p className="movie-row">Rząd: {reservation.seat.row}</p>
-        <p className="movie-seats">Miejsca: {reservation.seat.seats}</p>
+        {reservation.seats.map((seat) => (
+          <>
+            <p className="movie-row">Rząd: {seat.row}</p>
+            <p className="movie-seats">Miejsce: {seat.seat}</p>
+          </>
+        ))}
         <p className="movie-price">Suma: {reservation.price} zł</p>
       </div>
       <div className="reservation-buttons">
@@ -81,8 +93,12 @@ export function TicketsView() {
         <p className="movie-date">{transaction.showingDetails.date}</p>
         <p className="movie-hour">{transaction.showingDetails.hour}</p>
         <p className="movie-hall">Sala: {transaction.hall}</p>
-        <p className="movie-row">Rząd: {transaction.seat.row}</p>
-        <p className="movie-seats">Miejsca: {transaction.seat.seats}</p>
+        {transaction.seats.map((seat) => (
+          <>
+            <p className="movie-row">Rząd: {seat.row}</p>
+            <p className="movie-seats">Miejsce: {seat.seat}</p>
+          </>
+        ))}
         <p className="movie-price">Suma: {transaction.price} zł</p>
       </div>
     </div>
