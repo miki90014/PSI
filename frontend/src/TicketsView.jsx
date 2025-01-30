@@ -1,59 +1,29 @@
 import React from "react";
 import { Link } from "react-router";
+import { useState, useEffect } from "react";
 const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
-const reservations = [
-  {
-    id: 1,
-    movie: {
-      imageURL: "https://assets.upflix.pl/media/plakat/2017/paddington-2__300_427.jpg", //Reservation->AvailableSeats->Showing->Movie(nie istnieje)
-      title: "Paddington 2",
-    },
-    showingDetails: {
-      //Reservation/AvailableSeats/Showing
-      date: "12213",
-      hour: "123213",
-    },
-    hall: "5",
-    seats: [
-      {
-        //Reservation/AvailableSeats/Seatseat
-        row: "3",
-        seat: "3",
-      },
-      {
-        row: "3",
-        seat: "4",
-      },
-    ],
-    price: "29.00",
-  },
-];
+const API_BASE_CUSTOMER_URL = import.meta.env.VITE_APP_API_CUSTOMER_BASE_URL;
 
-const transactions = [
-  {
-    id: 1,
-    movie: {
-      imageURL: "https://fwcdn.pl/fpo/53/51/595351/7662231_1.3.jpg", //Reservation->AvailableSeats->Showing->Movie(nie istnieje)
-      title: "Paddington",
-    },
-    showingDetails: {
-      //Reservation/AvailableSeats/Showing
-      date: "12213",
-      hour: "123213",
-    },
-    hall: "5",
-    seats: [
-      {
-        //Reservation/AvailableSeats/Seatseat
-        row: "3",
-        seat: "3",
-      },
-    ],
-    price: "29.00",
-  },
-];
+async function fetchReservations(clientId) {
+  const response = await fetch(`${API_BASE_CUSTOMER_URL}/reservation/${clientId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch reservations");
+  }
+  const data = await response.json();
+  return data;
+}
 
 export function TicketsView() {
+  const [reservations, setReservations] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const today = new Date().toISOString().slice(0, 10);
+  useEffect(() => {
+    const clientId = 2;
+    fetchReservations(clientId).then((data) => {
+      setReservations(data.filter((reservation) => reservation.showingDetails.date >= today));
+      setTransactions(data.filter((reservation) => reservation.showingDetails.date < today));
+    });
+  }, []);
   const listOfReservations = reservations.map((reservation) => (
     <div className="reservation" key={reservation.id}>
       <div className="movie-poster-div">
