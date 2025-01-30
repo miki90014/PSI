@@ -3,7 +3,7 @@ from const import FORMATTER
 
 from flask import Blueprint, send_from_directory
 
-api = Blueprint("api", __name__)
+api = Blueprint("api", __name__, url_prefix="/employee")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
