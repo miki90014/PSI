@@ -14,6 +14,7 @@ services:
       - "5001:5000"
     environment:
       DATABASE_URL: "postgresql://admin:admin@database-customer:5432/customer"
+      BACKEND_URL_EMPLOYEE: "http://backend-employee:5000"
     depends_on:
       database-customer:
         condition: "service_healthy"

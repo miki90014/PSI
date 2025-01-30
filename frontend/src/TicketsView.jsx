@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-
+const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
 const reservations = [
   {
     id: 1,
@@ -57,7 +57,7 @@ export function TicketsView() {
   const listOfReservations = reservations.map((reservation) => (
     <div className="reservation" key={reservation.id}>
       <div className="movie-poster-div">
-        <img className="movie-poster" src={reservation.movie.imageURL} alt={reservation.movie.title} />
+        <img className="movie-poster" src={`${API_BASE_EMPLOYEE_URL}/image/${reservation.movie.imageURL}`} alt={reservation.movie.title} />
       </div>
       <div className="reservation-info">
         <p className="movie-title">{reservation.movie.title}</p>
@@ -86,7 +86,7 @@ export function TicketsView() {
   const listOfTransactions = transactions.map((transaction) => (
     <div className="reservation" key={transaction.id}>
       <div className="movie-poster-div">
-        <img className="movie-poster" src={transaction.movie.imageURL} alt={transaction.movie.title} />
+        <img className="movie-poster" src={`${API_BASE_EMPLOYEE_URL}/image/${transaction.movie.imageURL}`} alt={transaction.movie.title} />
       </div>
       <div className="reservation-info">
         <p className="movie-title">{transaction.movie.title}</p>

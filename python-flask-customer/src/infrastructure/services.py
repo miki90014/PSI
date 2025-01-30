@@ -2,6 +2,7 @@ import logging
 from const import FORMATTER
 from datetime import date, datetime
 import uuid
+from .bridge import get_movie_by_id, get_room_by_id, get_seat_by_id
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,17 +42,18 @@ class DatabaseService:
         temp =   self.db_handler.execute_query_and_fetch_result(query, (client,))
         result = []
         for i in temp:
-            movieID = i[1]
+            movie = get_movie_by_id(i[1])
             timeStamp = i[2]
             hallID = i[3]
             seats = []
             for j in i[4]:
-                seats.append({"row": "4", "seat": "5"})
+                seat = get_seat_by_id(j)
+                seats.append({"row": seat["row"], "seat": seat["number"]})
             result.append({
                 "id": i[0],
-                "movie":{ "imageURL":i[1], "title": "Movie Title"},
+                "movie":{ "imageURL":movie["imageURL"], "title": movie["title"]},
                 "showingDetails": {"date": str(timeStamp.date()), "hour": str(timeStamp.time())[:-3]},
-                "hall": i[3],
+                "hall": get_room_by_id(hallID)["name"],
                 "seats": seats,
                 "price": i[5]
             })
