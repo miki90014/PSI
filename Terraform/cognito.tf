@@ -1,5 +1,5 @@
-resource "aws_cognito_user_pool" "test_cognito_user_pool" {
-  name = "test_cognito_user_pool"
+resource "aws_cognito_user_pool" "cinema_user_pool" {
+  name = "cinema_user_pool"
 
   password_policy {
     minimum_length    = 8
@@ -15,16 +15,16 @@ resource "aws_cognito_user_pool" "test_cognito_user_pool" {
   }
 }
 
-resource "aws_cognito_user_pool_client" "test_cognito_user_pool_client" {
-  name                = "test_cognito_user_pool_client"
-  user_pool_id        = aws_cognito_user_pool.test_cognito_user_pool.id
+resource "aws_cognito_user_pool_client" "cinema_user_pool_client" {
+  name                = "cinema_user_pool_client"
+  user_pool_id        = aws_cognito_user_pool.cinema_user_pool.id
   explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
 }
-resource "aws_cognito_user_pool_domain" "test_cognito_user_pool_domain" {
-  domain       = "test-test-test-user-pool-domain"
-  user_pool_id = aws_cognito_user_pool.test_cognito_user_pool.id
+resource "aws_cognito_user_pool_domain" "cinema_user_pool_domain" {
+  domain       = "cinema-user-pool-domain"
+  user_pool_id = aws_cognito_user_pool.cinema_user_pool.id
 }
 
 output "COGNITO_CLIENT_ID" {
-  value = aws_cognito_user_pool_client.test_cognito_user_pool_client.id
+  value = aws_cognito_user_pool_client.cinema_user_pool_client.id
 }
