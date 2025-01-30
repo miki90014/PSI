@@ -7,3 +7,6 @@ flask_cors~=5.0.0
 requests~=2.31.0
 colorlog==6.9.0
 uuid
+qrcode
+pillow
+reportlab
