@@ -1,6 +1,6 @@
 # S3 Bucket for Static Frontend Files
-resource "aws_s3_bucket" "frontend_chef_connect_bucket" {
-  bucket = "frontend-chef-connect"
+resource "aws_s3_bucket" "frontend_cinema" {
+  bucket = "frontend-cinema"
 
   tags = {
     Environment = "Production"
@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "frontend_chef_connect_bucket" {
 }
 
 resource "aws_s3_bucket_website_configuration" "example" {
-  bucket = aws_s3_bucket.frontend_chef_connect_bucket.id
+  bucket = aws_s3_bucket.frontend_cinema.id
 
   index_document {
     suffix = "index.html"
@@ -22,7 +22,7 @@ resource "aws_s3_bucket_website_configuration" "example" {
 
 # Disable block public access settings
 resource "aws_s3_bucket_public_access_block" "frontend_public_access" {
-  bucket = aws_s3_bucket.frontend_chef_connect_bucket.id
+  bucket = aws_s3_bucket.frontend_cinema.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -30,15 +30,15 @@ resource "aws_s3_bucket_public_access_block" "frontend_public_access" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "frontend_chef_connect_bucket_policy" {
-  bucket = aws_s3_bucket.frontend_chef_connect_bucket.bucket
-  policy = data.aws_iam_policy_document.frontend_chef_connect_bucket_access.json
+resource "aws_s3_bucket_policy" "frontend_cinema_policy" {
+  bucket = aws_s3_bucket.frontend_cinema.bucket
+  policy = data.aws_iam_policy_document.frontend_cinema_access.json
 
   depends_on = [aws_s3_bucket_public_access_block.frontend_public_access]
 }
 
 # Policy document
-data "aws_iam_policy_document" "frontend_chef_connect_bucket_access" {
+data "aws_iam_policy_document" "frontend_cinema_access" {
   # read access
   statement {
     principals {
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "frontend_chef_connect_bucket_access" {
     ]
 
     resources = [
-      "${aws_s3_bucket.frontend_chef_connect_bucket.arn}/*",
+      "${aws_s3_bucket.frontend_cinema.arn}/*",
     ]
   }
 
@@ -69,13 +69,13 @@ data "aws_iam_policy_document" "frontend_chef_connect_bucket_access" {
     ]
 
     resources = [
-      "${aws_s3_bucket.frontend_chef_connect_bucket.arn}/*",
+      "${aws_s3_bucket.frontend_cinema.arn}/*",
     ]
   }
 }
 
 output "s3_bucket_name" {
-  value = aws_s3_bucket.frontend_chef_connect_bucket.bucket
+  value = aws_s3_bucket.frontend_cinema.bucket
 }
 
 output "website_endpoint" {
