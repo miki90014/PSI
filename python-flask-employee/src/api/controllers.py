@@ -94,3 +94,12 @@ def get_seats_of_room(id):
         seat_data.append(seat_dict)
 
     return seat_data
+
+@api.route("/seat/<id>", methods=["GET"])
+def get_seat_by_id(id):
+    from main import db_service
+
+    seat = db_service.get_seat_by_id(id)[0]
+    logger.info(f"Fetched seat of id: {id}.")
+
+    return {"ID": seat[0], "number": seat[1], "row": seat[2]}

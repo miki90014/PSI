@@ -2,6 +2,7 @@ import logging
 from const import FORMATTER
 from datetime import date, datetime
 import uuid
+from .bridge import get_movie_by_id, get_room_by_id, get_seat_by_id
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,11 +31,34 @@ class DatabaseService:
 
     def get_all_reservations(self, client):
         query = f"""
-        SELECT * FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
+        SELECT "Reservation"."ID", MIN("Showing"."MovieID"),
+        MIN("Showing"."Date"), MIN("Showing"."RoomID"),
+        ARRAY_AGG("AvailableSeats"."SeatseatID"), MIN("Ticket"."to_be_paid")
+        FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
         JOIN "Showing" ON "AvailableSeats"."ShowingID"="Showing"."ID"
-        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s;
+        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s
+        GROUP BY "Reservation"."ID";
         """
-        return self.db_handler.execute_query_and_fetch_result(query, (client,))
+        temp =   self.db_handler.execute_query_and_fetch_result(query, (client,))
+        result = []
+        for i in temp:
+            movie = get_movie_by_id(i[1])
+            timeStamp = i[2]
+            hallID = i[3]
+            seats = []
+            for j in i[4]:
+                seat = get_seat_by_id(j)
+                seats.append({"row": seat["row"], "seat": seat["number"]})
+            result.append({
+                "id": i[0],
+                "movie":{ "imageURL":movie["imageURL"], "title": movie["title"]},
+                "showingDetails": {"date": str(timeStamp.date()), "hour": str(timeStamp.time())[:-3]},
+                "hall": get_room_by_id(hallID)["name"],
+                "seats": seats,
+                "price": i[5]
+            })
+        return result
+  
 
     def get_payment_servicse(self):
         query = f"""

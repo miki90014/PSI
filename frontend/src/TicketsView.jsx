@@ -1,63 +1,45 @@
 import React from "react";
 import { Link } from "react-router";
+import { useState, useEffect } from "react";
+const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
+const API_BASE_CUSTOMER_URL = import.meta.env.VITE_APP_API_CUSTOMER_BASE_URL;
 
-const reservations = [
-  {
-    id: 1,
-    movie: {
-      imageURL: "https://assets.upflix.pl/media/plakat/2017/paddington-2__300_427.jpg", //Reservation->AvailableSeats->Showing->Movie(nie istnieje)
-      title: "Paddington 2",
-    },
-    showingDetails: {
-      //Reservation/AvailableSeats/Showing
-      date: "12213",
-      hour: "123213",
-    },
-    hall: "5",
-    seat: {
-      //Reservation/AvailableSeats/Seatseat
-      row: "3",
-      seats: "3",
-    },
-    price: "29.00",
-  },
-];
-
-const transactions = [
-  {
-    id: 1,
-    movie: {
-      imageURL: "https://fwcdn.pl/fpo/53/51/595351/7662231_1.3.jpg", //Reservation->AvailableSeats->Showing->Movie(nie istnieje)
-      title: "Paddington",
-    },
-    showingDetails: {
-      //Reservation/AvailableSeats/Showing
-      date: "12213",
-      hour: "123213",
-    },
-    hall: "5",
-    seat: {
-      //Reservation/AvailableSeats/Seatseat
-      row: "3",
-      seats: "3",
-    },
-    price: "29.00",
-  },
-];
+async function fetchReservations(clientId) {
+  const response = await fetch(`${API_BASE_CUSTOMER_URL}/reservation/${clientId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch reservations");
+  }
+  const data = await response.json();
+  return data;
+}
 
 export function TicketsView() {
+  const [reservations, setReservations] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const today = new Date().toISOString().slice(0, 10);
+  useEffect(() => {
+    const clientId = 2;
+    fetchReservations(clientId).then((data) => {
+      setReservations(data.filter((reservation) => reservation.showingDetails.date >= today));
+      setTransactions(data.filter((reservation) => reservation.showingDetails.date < today));
+    });
+  }, []);
   const listOfReservations = reservations.map((reservation) => (
     <div className="reservation" key={reservation.id}>
       <div className="movie-poster-div">
-        <img className="movie-poster" src={reservation.movie.imageURL} alt={reservation.movie.title} />
+        <img className="movie-poster" src={`${API_BASE_EMPLOYEE_URL}/image/${reservation.movie.imageURL}`} alt={reservation.movie.title} />
       </div>
       <div className="reservation-info">
         <p className="movie-title">{reservation.movie.title}</p>
         <p className="movie-date">{reservation.showingDetails.date}</p>
         <p className="movie-hour">{reservation.showingDetails.hour}</p>
         <p className="movie-hall">Sala: {reservation.hall}</p>
-        <p className="movie-row">Rząd: {reservation.seat.row}</p>
-        <p className="movie-seats">Miejsca: {reservation.seat.seats}</p>
+        {reservation.seats.map((seat) => (
+          <>
+            <p className="movie-row">Rząd: {seat.row}</p>
+            <p className="movie-seats">Miejsce: {seat.seat}</p>
+          </>
+        ))}
         <p className="movie-price">Suma: {reservation.price} zł</p>
       </div>
       <div className="reservation-buttons">
@@ -74,15 +56,19 @@ export function TicketsView() {
   const listOfTransactions = transactions.map((transaction) => (
     <div className="reservation" key={transaction.id}>
       <div className="movie-poster-div">
-        <img className="movie-poster" src={transaction.movie.imageURL} alt={transaction.movie.title} />
+        <img className="movie-poster" src={`${API_BASE_EMPLOYEE_URL}/image/${transaction.movie.imageURL}`} alt={transaction.movie.title} />
       </div>
       <div className="reservation-info">
         <p className="movie-title">{transaction.movie.title}</p>
         <p className="movie-date">{transaction.showingDetails.date}</p>
         <p className="movie-hour">{transaction.showingDetails.hour}</p>
         <p className="movie-hall">Sala: {transaction.hall}</p>
-        <p className="movie-row">Rząd: {transaction.seat.row}</p>
-        <p className="movie-seats">Miejsca: {transaction.seat.seats}</p>
+        {transaction.seats.map((seat) => (
+          <>
+            <p className="movie-row">Rząd: {seat.row}</p>
+            <p className="movie-seats">Miejsce: {seat.seat}</p>
+          </>
+        ))}
         <p className="movie-price">Suma: {transaction.price} zł</p>
       </div>
     </div>

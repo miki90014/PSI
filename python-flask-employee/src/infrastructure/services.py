@@ -45,3 +45,11 @@ class DatabaseService:
         WHERE "Seat"."RoomID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_seat_by_id(self, id):
+        query = """
+        SELECT *
+        FROM "Seat"
+        WHERE "Seat"."ID"=%s
+        """
+        return self.db_handler.execute_query_and_fetch_result(query, (id,))
