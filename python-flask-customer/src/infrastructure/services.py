@@ -77,3 +77,17 @@ class DatabaseService:
 
         self.db_handler.execute_query(update_query)
         return reservation_id
+
+    def get_seats_of_reservation(self, id):
+        query = f"""
+            SELECT * FROM "AvailableSeats"
+            WHERE "AvailableSeats"."ReservationID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+
+    def get_code(self, id):
+        query = f"""
+        SELECT "code" FROM "Reservation"
+        WHERE "Reservation"."ID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)

@@ -13,7 +13,6 @@ export function ReservationFinalization() {
   const price = parseFloat(queryParams.get("price"));
   const form = queryParams.get("form");
   const title = queryParams.get("movieTitle");
-  const roomID = queryParams.get("roomID");
   const cinemaName = queryParams.get("cinemaName");
   const selectedSeats = queryParams.get("selectedSeats")
     ? queryParams.get("selectedSeats").split(",").map(Number)
@@ -89,7 +88,7 @@ export function ReservationFinalization() {
 
       const data = await response.json();
       if (response.ok) {
-        navigate(`/ticket-summary/${data.reservationID}`);
+        navigate(`/ticket-summary/${data.reservationID}?date=${date}&form=${form}&movieTitle=${title}&cinemaName=${cinemaName}&selectedSeatsNames=${selectedSeatsNames}&email=${formData.email}&price=${price}`);
         
       } else {
         alert(`Błąd: ${data.message}`);
