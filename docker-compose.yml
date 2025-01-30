@@ -1,0 +1,45 @@
+services:
+  backend-employee:
+    build: ./python-flask-employee
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "postgresql://admin:admin@database-employee:5432/employee"
+    depends_on:
+      database-employee:
+        condition: "service_healthy"
+  backend-customer:
+    build: ./python-flask-customer
+    ports:
+      - "5001:5000"
+    environment:
+      DATABASE_URL: "postgresql://admin:admin@database-customer:5432/customer"
+    depends_on:
+      database-customer:
+        condition: "service_healthy"
+
+  database-employee:
+    image: postgres:17.2
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "employee"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d employee"]
+      interval: 1m
+      timeout: 5s
+      start_period: 10s
+      start_interval: 1s
+
+  database-customer:
+    image: postgres:17.2
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "customer"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d customer"]
+      interval: 1m
+      timeout: 5s
+      start_period: 10s
+      start_interval: 1s

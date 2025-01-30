@@ -11,6 +11,7 @@ create table if not exists "Showing" (
     "FormID" int4 not null,
     "ProgramID" int4 not null,
     "RoomID" int4 not null,
+    "MovieID" int4 not null,
     primary key ("ID")
 );
 
@@ -26,7 +27,7 @@ create table if not exists "AvailableSeats" (
 create table if not exists "Reservation" (
     "ID" serial not null,
     "code" varchar(255) not null,
-    "date" date not null,
+    "date" timestamp not null,
     "ClientID" int4 not null,
     primary key ("ID")
 );
@@ -35,7 +36,7 @@ create table if not exists "Ticket" (
     "ID" serial not null,
     "ReservationID" int4 not null,
     "PaymentID" int4 not null,
-    "date" int4 not null,
+    "date" timestamp not null,
     "TypeID" int4 not null,
     "to_be_paid" float4 not null,
     "verified" char(1) not null,
@@ -55,7 +56,7 @@ create table if not exists "Client" (
     "ID" serial not null,
     "first_name" varchar(255) not null,
     "last_name" varchar(255) not null,
-    "email" varchar(255) not null,
+    "email" varchar(255) unique not null,
     "userID" int4,
     "telephone_number" varchar(255),
     primary key ("ID")

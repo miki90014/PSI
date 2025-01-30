@@ -1,6 +1,7 @@
 import { useParams, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Spinner, Alert, Card, Button  } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; 
 
 export function MovieReservation() {
     const location = useLocation();
@@ -21,6 +22,7 @@ export function MovieReservation() {
     const roomID = queryParams.get('roomID');
     const cinemaName = queryParams.get('cinemaName');
     const imageURL = queryParams.get('imageURL');
+    let selectedSeatsNames = []
 
     const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
     const API_BASE_CUSTOMER_URL = import.meta.env.VITE_APP_API_CUSTOMER_BASE_URL;
@@ -179,12 +181,21 @@ export function MovieReservation() {
                     <strong>Miejsca:</strong>{" "}
                     {selectedSeats.map((seatID) => {
                       const seat = seats.find((s) => s.ID === seatID);
+                      selectedSeatsNames.push( `${seat.row}${seat.number}`)
                       return `${seat.row}${seat.number} `;
                     })}
                     <br></br>
                     <strong>Całkowita cena:</strong> {selectedSeats.length * price} PLN
                   </div>
                 )}
+                <Link to={
+                    `/reservation-finalization/${showID}?date=${date}&price=${price}&form=${form}&movieTitle=${title}&cinemaName=${cinemaName}&selectedSeats=${selectedSeats}&selectedSeatsNames=${selectedSeatsNames}`
+                  }>
+                    <br></br>
+                  <button className="btn btn-outline-primary btn-sm">
+                    <i className="bi bi-bookmark-plus"></i> Potwierdzam Wybór
+                  </button>
+                </Link>
             </Col>
           </Row>
 

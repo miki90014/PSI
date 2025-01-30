@@ -5,6 +5,8 @@ import { Login } from "./Login.jsx";
 import { Home } from "./Home.jsx";
 import {MovieReservation} from "./MovieReservation.jsx";
 import { MovieDetails } from "./MovieDetails.jsx";
+import { ReservationFinalization } from "./ReservationFinalization.jsx";
+import {TicketSummary} from "./TicketSummary.jsx"
 import { Register } from "./Register.jsx";
 import { UserData } from "./UserData.jsx";
 import { TicketsView } from "./TicketsView.jsx";
@@ -36,6 +38,8 @@ function Main() {
         </Route>
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/movie-reservation/:showID" element={<MovieReservation />} />
+        <Route path="/reservation-finalization/:showID" element={<ReservationFinalization />} />
+        <Route path="/ticket-summary/:reservationID" element={<TicketSummary />} />
       </Routes>
     </Router>
   );
