@@ -28,6 +28,14 @@ class DatabaseService:
         """
         return self.db_handler.execute_query_and_fetch_result(query)
 
+    def get_all_reservations(self, client):
+        query = f"""
+        SELECT * FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
+        JOIN "Showing" ON "AvailableSeats"."ShowingID"="Showing"."ID"
+        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s;
+        """
+        return self.db_handler.execute_query_and_fetch_result(query, (client,))
+
     def get_payment_servicse(self):
         query = f"""
         SELECT * FROM "Payment"

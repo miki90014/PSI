@@ -11,6 +11,7 @@ create table if not exists "Showing" (
     "FormID" int4 not null,
     "ProgramID" int4 not null,
     "RoomID" int4 not null,
+    "MovieID" int4 not null,
     primary key ("ID")
 );
 
