@@ -33,9 +33,9 @@ resource "aws_ecs_task_definition" "backend-employee" {
         }
       ]
       environment = [
-        { name = "DATABASE_URL", value = "terraform-20250104154212873200000001.cj0maeyg8c5h.us-east-1.rds.amazonaws.com:5432" },
-        { name = "POSTGRES_USER", value = "postgres" },
-        { name = "POSTGRES_PASSWORD", value = "postgres123" },
+        { name = "DATABASE_URL", value = var.rds_employee },
+        { name = "POSTGRES_USER", value = var.rds_username },
+        { name = "POSTGRES_PASSWORD", value = var.rds_password },
       ]
       logConfiguration = {
         logDriver = "awslogs"
@@ -73,9 +73,9 @@ resource "aws_ecs_task_definition" "backend-customer" {
         }
       ]
       environment = [
-        { name = "DATABASE_URL", value = "terraform-20250104154212873200000001.cj0maeyg8c5h.us-east-1.rds.amazonaws.com:5432" },
-        { name = "POSTGRES_USER", value = "postgres" },
-        { name = "POSTGRES_PASSWORD", value = "postgres123" },
+        { name = "DATABASE_URL", value = var.rds_employee },
+        { name = "POSTGRES_USER", value = var.rds_username },
+        { name = "POSTGRES_PASSWORD", value = var.rds_password },
       ]
       logConfiguration = {
         logDriver = "awslogs"
