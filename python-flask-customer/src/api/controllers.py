@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 
-api = Blueprint("api", __name__)
+api = Blueprint("api", __name__, url_prefix="/customer")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
