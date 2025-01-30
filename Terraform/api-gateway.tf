@@ -21,7 +21,7 @@ resource "aws_api_gateway_integration" "customer_integration" {
   resource_id = aws_api_gateway_resource.customer.id
   http_method = aws_api_gateway_method.customer_method.http_method
   type        = "HTTP_PROXY"
-  uri         = "http://${aws_lb.chat_alb.dns_name}/customer"
+  uri         = "http://${aws_lb.cinema_alb.dns_name}/customer"
 }
 
 resource "aws_api_gateway_resource" "employee" {
@@ -42,7 +42,7 @@ resource "aws_api_gateway_integration" "employee_integration" {
   resource_id = aws_api_gateway_resource.employee.id
   http_method = aws_api_gateway_method.employee_method.http_method
   type        = "HTTP_PROXY"
-  uri         = "http://${aws_lb.chat_alb.dns_name}/employee"
+  uri         = "http://${aws_lb.cinema_alb.dns_name}/employee"
 }
 
 resource "aws_api_gateway_deployment" "cinema_api_deployment" {
@@ -54,6 +54,6 @@ resource "aws_api_gateway_deployment" "cinema_api_deployment" {
 }
 
 output "api_gateway_url" {
-  value = aws_api_gateway_deployment.example.invoke_url
+  value = aws_api_gateway_deployment.cinema_api_deployment.invoke_url
 }
 

@@ -103,7 +103,7 @@ resource "aws_ecs_service" "backend-employee_service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.backend_tg.arn
+    target_group_arn = aws_lb_target_group.backend-employee_tg.arn
     container_name   = "backend"
     container_port   = 5000
   }
@@ -124,7 +124,7 @@ resource "aws_ecs_service" "backend-customer_service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.backend_tg.arn
+    target_group_arn = aws_lb_target_group.backend-customer_tg.arn
     container_name   = "backend-customer"
     container_port   = 5000
   }
