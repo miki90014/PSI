@@ -8,7 +8,7 @@ resource "aws_lb" "cinema_alb" {
 
 resource "aws_lb_target_group" "backend-customer_tg" {
   name        = "backend-customer-tg"
-  port        = 3000
+  port        = 5000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.clouds_vpc.id
   target_type = "ip"
@@ -16,7 +16,7 @@ resource "aws_lb_target_group" "backend-customer_tg" {
 
 resource "aws_lb_target_group" "backend-employee_tg" {
   name        = "backend-employee-tg"
-  port        = 3000
+  port        = 5000
   protocol    = "HTTP"
   vpc_id      = aws_vpc.clouds_vpc.id
   target_type = "ip"
