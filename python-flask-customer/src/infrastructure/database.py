@@ -94,6 +94,18 @@ class DatabaseHandler:
             self.connection.rollback()
             return None
 
+    def execute_and_return_id(self, query):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                self.connection.commit()
+                logger.info("The query was completed successfully.")
+                return cursor.fetchone()[0]
+        except Exception as e:
+            logger.error(f"Error executing query: {e}")
+            self.connection.rollback()
+            return None
+
     def close(self):
         if self.cursor:
             self.cursor.close()
