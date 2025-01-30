@@ -1,7 +1,7 @@
 import logging
 from const import FORMATTER
 
-from flask import Blueprint
+from flask import Blueprint, jsonify, request
 
 api = Blueprint("api", __name__)
 
@@ -53,3 +53,35 @@ def get_available_seats_of_show(id):
         seat_data.append(seat_dict)
 
     return seat_data
+
+
+@api.route("/payment_services", methods=["GET"])
+def get_payment_services():
+    from main import db_service
+
+    payments = db_service.get_payment_servicse()
+    payment_data = []
+    for payment in payments:
+        payment_dict = {
+            "ID": payment[0],
+            "name": payment[1],
+        }
+        payment_data.append(payment_dict)
+
+    return payment_data
+
+
+@api.route("/buy_ticket/<id>", methods=["POST"])
+def buy_ticket(id):
+    from main import db_service
+
+    data = request.get_json()
+    if not data:
+        logger.info("Could not read json data. Invalid JSON format")
+        return jsonify({"error": "Invalid JSON format"}), 400
+    logger.info(f"Recieved buying order of show id: {id} and data: {data}.")
+    reservation_id = db_service.save_bought_ticket(data)
+    return (
+        jsonify({"message": "Saved successful", "reservationID": reservation_id}),
+        200,
+    )
