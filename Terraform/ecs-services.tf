@@ -104,7 +104,7 @@ resource "aws_ecs_service" "backend-employee_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.backend-employee_tg.arn
-    container_name   = "backend"
+    container_name   = "backend-employee"
     container_port   = 5000
   }
   depends_on = [aws_lb_listener.http_listener]
@@ -114,7 +114,7 @@ resource "aws_ecs_service" "backend-customer_service" {
   name            = "backend-customer-service"
   cluster         = aws_ecs_cluster.app-cluster.id
   task_definition = aws_ecs_task_definition.backend-customer.arn
-  desired_count   = 30
+  desired_count   = 3
   launch_type     = "FARGATE"
 
   network_configuration {
