@@ -73,10 +73,17 @@ def get_all_reservations(client):
 def post_confirm_reservation(reservationID):
     from main import db_service
 
-    logger.info(f"Recieved confirmation for reservation id: {reservationID}.")
+    logger.info(f"Received confirmation for reservation id: {reservationID}.")
     db_service.post_confirm_reservation(reservationID)
     return {"message": "Reservation confirmed."}
 
+@api.route("/cancel_reservation/<reservationID>", methods=["POST"])
+def post_cancel_reservation(reservationID):
+    from main import db_service
+
+    logger.info(f"Received cancellation for reservation id: {reservationID}.")
+    db_service.post_cancel_reservation(reservationID)
+    return {"message": "Reservation canceled."}
 
 @api.route("/payment_services", methods=["GET"])
 def get_payment_services():

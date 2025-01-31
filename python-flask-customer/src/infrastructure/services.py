@@ -33,10 +33,10 @@ class DatabaseService:
         query = f"""
         SELECT "Reservation"."ID", MIN("Showing"."MovieID"),
         MIN("Showing"."Date"), MIN("Showing"."RoomID"),
-        ARRAY_AGG("AvailableSeats"."SeatseatID"), MIN("Ticket"."to_be_paid")
+        ARRAY_AGG("AvailableSeats"."SeatseatID"), MIN("Ticket"."to_be_paid"), MIN("CanceledTicket"."ID")
         FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
         JOIN "Showing" ON "AvailableSeats"."ShowingID"="Showing"."ID"
-        LEFT JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s
+        LEFT JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" LEFT JOIN "CanceledTicket" ON "Ticket"."ID"="CanceledTicket"."TicketReservationID" WHERE "Reservation"."ClientID" = %s
         GROUP BY "Reservation"."ID";
         """
         temp =   self.db_handler.execute_query_and_fetch_result(query, (client,))
@@ -55,7 +55,8 @@ class DatabaseService:
                 "showingDetails": {"date": str(timeStamp.date()), "hour": str(timeStamp.time())[:-3]},
                 "hall": get_room_by_id(hallID)["name"],
                 "seats": seats,
-                "price": i[5]
+                "price": i[5],
+                "canceled": i[6] is not None
             })
         return result
   
@@ -63,6 +64,12 @@ class DatabaseService:
         query="""INSERT INTO "Ticket" ("ReservationID", "PaymentID", "date", "TypeID", "to_be_paid", "verified", "PaymentStatusID") VALUES
         (%s, 1, %s, 1, 15.0, 'T', 1)"""
         self.db_handler.execute_query_and_fetch_result(query, (reservationID, datetime.now()))
+
+    def post_cancel_reservation(self, reservationID):
+        query="""SELECT "ID" FROM "Ticket" WHERE "ReservationID"=%s"""
+        ticketID = self.db_handler.execute_query_and_fetch_result(query, (reservationID,))[0][0]
+        query="""INSERT INTO "CanceledTicket" ("bank_account", "date","TicketReservationID") VALUES (%s, %s, %s)"""
+        self.db_handler.execute_query_and_fetch_result(query, ("345905678945678956",datetime.now(),ticketID,))
 
     def get_payment_servicse(self):
         query = f"""

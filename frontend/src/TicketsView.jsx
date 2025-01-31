@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
 const API_BASE_CUSTOMER_URL = import.meta.env.VITE_APP_API_CUSTOMER_BASE_URL;
+const today = new Date().toISOString().slice(0, 10);
 
 async function fetchReservations(clientId) {
   const response = await fetch(`${API_BASE_CUSTOMER_URL}/reservation/${clientId}`);
@@ -17,6 +18,12 @@ async function confirmReservation(reservationId) {
   const response = await fetch(`${API_BASE_CUSTOMER_URL}/confirm_reservation/${reservationId}`, { method: "POST" });
   if (!response.ok) {
     throw new Error("Failed to confirm reservation");
+  }
+}
+async function cancelReservation(reservationId) {
+  const response = await fetch(`${API_BASE_CUSTOMER_URL}/cancel_reservation/${reservationId}`, { method: "POST" });
+  if (!response.ok) {
+    throw new Error("Failed to cancel reservation");
   }
 }
 
@@ -51,14 +58,9 @@ export function TicketsView() {
         ))}
         {reservation.price == null ? null : <p className="movie-price">Suma: {reservation.price} zł</p>}
       </div>
-      <div className="reservation-buttons">
-        <button type="button" className="pay-button" onClick={() => confirmReservation(reservation.id).then(() => updateReservationsAfterChanges())}>
-          Opłać
-        </button>
-        <button type="button" className="cancel-button">
-          Anuluj
-        </button>
-      </div>
+      <button type="button" className="pay-button" onClick={() => confirmReservation(reservation.id).then(() => updateReservationsAfterChanges())}>
+        Opłać
+      </button>
     </div>
   ));
 
@@ -80,6 +82,17 @@ export function TicketsView() {
         ))}
         {transaction.price == null ? null : <p className="movie-price">Suma: {transaction.price} zł</p>}
       </div>
+      {!transaction.canceled ? (
+        transaction.showingDetails.date > today ? (
+          <button type="button" className="cancel-button" onClick={() => cancelReservation(transaction.id).then(() => updateReservationsAfterChanges())}>
+            Anuluj
+          </button>
+        ) : (
+          <p>Czas na anulowanie minął :( </p>
+        )
+      ) : (
+        <p>Anulowane</p>
+      )}
     </div>
   ));
   return (
