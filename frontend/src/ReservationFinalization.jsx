@@ -14,9 +14,7 @@ export function ReservationFinalization() {
   const form = queryParams.get("form");
   const title = queryParams.get("movieTitle");
   const cinemaName = queryParams.get("cinemaName");
-  const selectedSeats = queryParams.get("selectedSeats")
-    ? queryParams.get("selectedSeats").split(",").map(Number)
-    : [];
+  const selectedSeats = queryParams.get("selectedSeats") ? queryParams.get("selectedSeats").split(",").map(Number) : [];
   const selectedSeatsNames = queryParams.get("selectedSeatsNames");
 
   console.log(selectedSeatsNames);
@@ -88,8 +86,9 @@ export function ReservationFinalization() {
 
       const data = await response.json();
       if (response.ok) {
-        navigate(`/ticket-summary/${data.reservationID}?date=${date}&form=${form}&movieTitle=${title}&cinemaName=${cinemaName}&selectedSeatsNames=${selectedSeatsNames}&email=${formData.email}&price=${price}`);
-        
+        navigate(
+          `/ticket-summary/${data.reservationID}?date=${date}&form=${form}&movieTitle=${title}&cinemaName=${cinemaName}&selectedSeatsNames=${selectedSeatsNames}&email=${formData.email}&price=${price}`
+        );
       } else {
         alert(`Błąd: ${data.message}`);
       }
@@ -127,50 +126,22 @@ export function ReservationFinalization() {
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Imię</Form.Label>
-              <Form.Control
-                type="text"
-                name="firstName"
-                placeholder="Wpisz imię"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
+              <Form.Control type="text" name="firstName" placeholder="Wpisz imię" value={formData.firstName} onChange={handleChange} required />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Nazwisko</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastName"
-                placeholder="Wpisz nazwisko"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
+              <Form.Control type="text" name="lastName" placeholder="Wpisz nazwisko" value={formData.lastName} onChange={handleChange} required />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="Wpisz email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
+              <Form.Control type="email" name="email" placeholder="Wpisz email" value={formData.email} onChange={handleChange} required />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Numer telefonu</Form.Label>
-              <Form.Control
-                type="tel"
-                name="phone"
-                placeholder="Wpisz numer telefonu"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
+              <Form.Control type="tel" name="phone" placeholder="Wpisz numer telefonu" value={formData.phone} onChange={handleChange} required />
             </Form.Group>
 
             {/* Wybór metody płatności */}

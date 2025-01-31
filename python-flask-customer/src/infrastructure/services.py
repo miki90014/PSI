@@ -36,7 +36,7 @@ class DatabaseService:
         ARRAY_AGG("AvailableSeats"."SeatseatID"), MIN("Ticket"."to_be_paid")
         FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
         JOIN "Showing" ON "AvailableSeats"."ShowingID"="Showing"."ID"
-        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s
+        LEFT JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s
         GROUP BY "Reservation"."ID";
         """
         temp =   self.db_handler.execute_query_and_fetch_result(query, (client,))
@@ -59,6 +59,10 @@ class DatabaseService:
             })
         return result
   
+    def post_confirm_reservation(self, reservationID):
+        query="""INSERT INTO "Ticket" ("ReservationID", "PaymentID", "date", "TypeID", "to_be_paid", "verified", "PaymentStatusID") VALUES
+        (%s, 1, %s, 1, 15.0, 'T', 1)"""
+        self.db_handler.execute_query_and_fetch_result(query, (reservationID, datetime.now()))
 
     def get_payment_servicse(self):
         query = f"""

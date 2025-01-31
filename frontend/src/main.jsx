@@ -13,6 +13,7 @@ import { TicketsView } from "./TicketsView.jsx";
 import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./UserData.css";
 import { Protected } from "./Protected.jsx";
 
 function Main() {
