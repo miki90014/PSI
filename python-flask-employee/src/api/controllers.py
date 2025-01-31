@@ -95,6 +95,7 @@ def get_seats_of_room(id):
 
     return seat_data
 
+
 @api.route("/seat/<id>", methods=["GET"])
 def get_seat_by_id(id):
     from main import db_service
@@ -103,3 +104,8 @@ def get_seat_by_id(id):
     logger.info(f"Fetched seat of id: {id}.")
 
     return {"ID": seat[0], "number": seat[1], "row": seat[2]}
+
+
+@api.route("/test_performance", methods=["GET"])
+def test_performance():
+    return ""
