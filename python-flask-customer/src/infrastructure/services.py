@@ -71,6 +71,13 @@ class DatabaseService:
         query="""INSERT INTO "CanceledTicket" ("bank_account", "date","TicketReservationID") VALUES (%s, %s, %s)"""
         self.db_handler.execute_query_and_fetch_result(query, ("345905678945678956",datetime.now(),ticketID,))
 
+    def get_client_by_email(self, email):
+        query = f"""
+        SELECT * FROM "Client"
+        WHERE "Client"."email"= %s
+        """
+        return self.db_handler.execute_query_and_fetch_result(query, (email,))
+
     def get_payment_servicse(self):
         query = f"""
         SELECT * FROM "Payment"

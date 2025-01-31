@@ -85,6 +85,19 @@ def post_cancel_reservation(reservationID):
     db_service.post_cancel_reservation(reservationID)
     return {"message": "Reservation canceled."}
 
+@api.route("/client/<client_email>", methods=["GET"])
+def get_client_by_email(client_email):
+    from main import db_service
+
+    logger.info(f"Received request for client with email: {client_email}.")
+    client = db_service.get_client_by_email(client_email)
+    return {"ID": client[0],
+             "first_name": client[1],
+               "last_name": client[2],
+                 "email": client[3],
+                   "userID": client[4],
+                     "telephone_number": client[5]}
+
 @api.route("/payment_services", methods=["GET"])
 def get_payment_services():
     from main import db_service
