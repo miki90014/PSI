@@ -148,3 +148,8 @@ def get_code(id):
     logger.info(f"Recieved request for reservation id: {id}.")
     code = db_service.get_code(id)[0][0]
     return {"code": code}
+
+
+@api.route("/test_performance", methods=["GET"])
+def test_performance():
+    return {}
