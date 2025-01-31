@@ -1,6 +1,6 @@
 INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID", "MovieID") VALUES
-('2025-02-10 14:00:00', 15, 1, 1, 1, 1),
-('2025-02-15 16:30:00', 20, 2, 2, 2, 2);
+('2025-01-10 14:00:00', 15, 1, 1, 1, 1),
+('2025-01-15 16:30:00', 20, 2, 2, 2, 2);
 
 INSERT INTO "Client" ("first_name", "last_name", "email", "telephone_number") VALUES
 ('John', 'Doe', 'john.doe@example.com', '123-456-7890'),
@@ -9,7 +9,10 @@ INSERT INTO "Client" ("first_name", "last_name", "email", "telephone_number") VA
 INSERT INTO "Reservation" ("code", "date", "ClientID") VALUES
 ('ABC123', '2025-01-10 14:00:00', 1),
 ('XYZ789', '2025-01-10 14:00:00', 2),
-('XYZ789', '2025-01-10 14:00:00', 2);
+('XYZ789', '2025-01-10 14:00:00', 2),
+('XYZ789', '2025-01-10 14:00:00', 1),
+('XYZ789', '2025-01-10 14:00:00', 1);
+
 
 INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID", "ReservationID") VALUES
 ('T', 1, 1, NULL),
@@ -32,8 +35,8 @@ INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID", "Reservati
 ('F', 18, 2, 2),
 ('F', 19, 2, 3),
 ('F', 20, 2, 3),
-('F', 21, 2, 3),
-('F', 22, 2, 3),
+('F', 21, 2, 4),
+('F', 22, 2, 5),
 ('T', 23, 2, NULL),
 ('T', 24, 2, NULL);
 

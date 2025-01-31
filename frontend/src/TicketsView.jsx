@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
+
 const API_BASE_EMPLOYEE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
 const API_BASE_CUSTOMER_URL = import.meta.env.VITE_APP_API_CUSTOMER_BASE_URL;
+const today = new Date().toISOString().slice(0, 10);
 
 async function fetchReservations(clientId) {
   const response = await fetch(`${API_BASE_CUSTOMER_URL}/reservation/${clientId}`);
@@ -12,17 +14,31 @@ async function fetchReservations(clientId) {
   const data = await response.json();
   return data;
 }
+async function confirmReservation(reservationId) {
+  const response = await fetch(`${API_BASE_CUSTOMER_URL}/confirm_reservation/${reservationId}`, { method: "POST" });
+  if (!response.ok) {
+    throw new Error("Failed to confirm reservation");
+  }
+}
+async function cancelReservation(reservationId) {
+  const response = await fetch(`${API_BASE_CUSTOMER_URL}/cancel_reservation/${reservationId}`, { method: "POST" });
+  if (!response.ok) {
+    throw new Error("Failed to cancel reservation");
+  }
+}
 
 export function TicketsView() {
   const [reservations, setReservations] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const today = new Date().toISOString().slice(0, 10);
-  useEffect(() => {
-    const clientId = 2;
+  async function updateReservationsAfterChanges() {
+    const clientId = 1;
     fetchReservations(clientId).then((data) => {
-      setReservations(data.filter((reservation) => reservation.showingDetails.date >= today));
-      setTransactions(data.filter((reservation) => reservation.showingDetails.date < today));
+      setReservations(data.filter((reservation) => reservation.price == null));
+      setTransactions(data.filter((reservation) => reservation.price != null));
     });
+  }
+  useEffect(() => {
+    updateReservationsAfterChanges();
   }, []);
   const listOfReservations = reservations.map((reservation) => (
     <div className="reservation" key={reservation.id}>
@@ -40,16 +56,11 @@ export function TicketsView() {
             <p className="movie-seats">Miejsce: {seat.seat}</p>
           </>
         ))}
-        <p className="movie-price">Suma: {reservation.price} zł</p>
+        {reservation.price == null ? null : <p className="movie-price">Suma: {reservation.price} zł</p>}
       </div>
-      <div className="reservation-buttons">
-        <button type="button" className="pay-button">
-          Opłać
-        </button>
-        <button type="button" className="cancel-button">
-          Anuluj
-        </button>
-      </div>
+      <button type="button" className="pay-button" onClick={() => confirmReservation(reservation.id).then(() => updateReservationsAfterChanges())}>
+        Opłać
+      </button>
     </div>
   ));
 
@@ -69,20 +80,43 @@ export function TicketsView() {
             <p className="movie-seats">Miejsce: {seat.seat}</p>
           </>
         ))}
-        <p className="movie-price">Suma: {transaction.price} zł</p>
+        {transaction.price == null ? null : <p className="movie-price">Suma: {transaction.price} zł</p>}
       </div>
+      {!transaction.canceled ? (
+        transaction.showingDetails.date > today ? (
+          <button type="button" className="cancel-button" onClick={() => cancelReservation(transaction.id).then(() => updateReservationsAfterChanges())}>
+            Anuluj
+          </button>
+        ) : (
+          <p>Czas na anulowanie minął :( </p>
+        )
+      ) : (
+        <p>Anulowane</p>
+      )}
     </div>
   ));
   return (
     <div className="tickets-view-side">
       <div className="nav-bar">
-        <Link to="/client">Strona główna</Link>
-        <Link to="/client">Repertuar</Link>
-        <Link to="/client">Nasze kina</Link>
-        <Link className="active" to="/client/login/reservations">
-          Bilety
-        </Link>
-        <Link to="/client/login/userdata">Moje konto</Link>
+        <ul>
+          <li>
+            <Link to="/client">Strona główna</Link>
+          </li>
+          <li>
+            <Link to="/client">Repertuar</Link>
+          </li>
+          <li>
+            <Link to="/client">Nasze kina</Link>
+          </li>
+          <li>
+            <Link className="active" to="/client/login/reservations">
+              Bilety
+            </Link>
+          </li>
+          <li>
+            <Link to="/client/login/userdata">Moje konto</Link>
+          </li>
+        </ul>
       </div>
       <div className="tickets-view">
         <div className="reservations">

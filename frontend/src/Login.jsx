@@ -18,7 +18,7 @@ export function Login({ setAccessToken }) {
             cognitoLogin(username, password)
               .then((result) => {
                 setAccessToken(result.AuthenticationResult.AccessToken);
-                window.alert("Logged in successfully");
+                navigate("/client/login/userdata");
               })
               .catch((error) => window.alert(error.message));
           }}
@@ -29,9 +29,7 @@ export function Login({ setAccessToken }) {
           <label htmlFor="password">Password:</label>
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <br />
-          <button type="submit" onClick={() => navigate("/client/login/userdata")}>
-            Login
-          </button>
+          <button type="submit">Login</button>
         </form>
         <button className="register-btn" onClick={() => navigate("/client/register")}>
           Register
