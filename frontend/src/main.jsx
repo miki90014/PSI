@@ -3,17 +3,18 @@ import { createRoot } from "react-dom/client";
 import { EmployeePanel } from "./EmployeePanel.jsx";
 import { Login } from "./Login.jsx";
 import { Home } from "./Home.jsx";
-import {MovieReservation} from "./MovieReservation.jsx";
+import { MovieReservation } from "./MovieReservation.jsx";
 import { MovieDetails } from "./MovieDetails.jsx";
 import { ReservationFinalization } from "./ReservationFinalization.jsx";
-import {TicketSummary} from "./TicketSummary.jsx"
+import { TicketSummary } from "./TicketSummary.jsx";
 import { Register } from "./Register.jsx";
 import { UserData } from "./UserData.jsx";
 import { TicketsView } from "./TicketsView.jsx";
 import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./UserData.css";
+import { Protected } from "./Protected.jsx";
 
 function Main() {
   const [accessToken, setAccessToken] = useState(null);
@@ -28,8 +29,22 @@ function Main() {
           <Route index element={<Home />} />
           <Route path="login">
             <Route index element={<Login setAccessToken={setAccessToken} />} />
-            <Route path="userdata" element={<UserData accessToken={accessToken} />} />
-            <Route path="reservations" element={<TicketsView accessToken={accessToken} />} />
+            <Route
+              path="userdata"
+              element={
+                <Protected accessToken={accessToken}>
+                  <UserData accessToken={accessToken} />
+                </Protected>
+              }
+            />
+            <Route
+              path="reservations"
+              element={
+                <Protected accessToken={accessToken}>
+                  <TicketsView accessToken={accessToken} />
+                </Protected>
+              }
+            />
           </Route>
           <Route path="register" element={<Register />} />
         </Route>

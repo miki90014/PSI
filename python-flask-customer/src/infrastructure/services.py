@@ -2,6 +2,7 @@ import logging
 from const import FORMATTER
 from datetime import date, datetime
 import uuid
+from .bridge import get_movie_by_id, get_room_by_id, get_seat_by_id
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,11 +31,52 @@ class DatabaseService:
 
     def get_all_reservations(self, client):
         query = f"""
-        SELECT * FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
+        SELECT "Reservation"."ID", MIN("Showing"."MovieID"),
+        MIN("Showing"."Date"), MIN("Showing"."RoomID"),
+        ARRAY_AGG("AvailableSeats"."SeatseatID"), MIN("Ticket"."to_be_paid"), MIN("CanceledTicket"."ID")
+        FROM "Reservation" JOIN "AvailableSeats" ON "Reservation"."ID"="AvailableSeats"."ReservationID"
         JOIN "Showing" ON "AvailableSeats"."ShowingID"="Showing"."ID"
-        JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" WHERE "Reservation"."ClientID" = %s;
+        LEFT JOIN "Ticket" ON "Reservation"."ID"="Ticket"."ReservationID" LEFT JOIN "CanceledTicket" ON "Ticket"."ID"="CanceledTicket"."TicketReservationID" WHERE "Reservation"."ClientID" = %s
+        GROUP BY "Reservation"."ID";
         """
-        return self.db_handler.execute_query_and_fetch_result(query, (client,))
+        temp =   self.db_handler.execute_query_and_fetch_result(query, (client,))
+        result = []
+        for i in temp:
+            movie = get_movie_by_id(i[1])
+            timeStamp = i[2]
+            hallID = i[3]
+            seats = []
+            for j in i[4]:
+                seat = get_seat_by_id(j)
+                seats.append({"row": seat["row"], "seat": seat["number"]})
+            result.append({
+                "id": i[0],
+                "movie":{ "imageURL":movie["imageURL"], "title": movie["title"]},
+                "showingDetails": {"date": str(timeStamp.date()), "hour": str(timeStamp.time())[:-3]},
+                "hall": get_room_by_id(hallID)["name"],
+                "seats": seats,
+                "price": i[5],
+                "canceled": i[6] is not None
+            })
+        return result
+  
+    def post_confirm_reservation(self, reservationID):
+        query="""INSERT INTO "Ticket" ("ReservationID", "PaymentID", "date", "TypeID", "to_be_paid", "verified", "PaymentStatusID") VALUES
+        (%s, 1, %s, 1, 15.0, 'T', 1)"""
+        self.db_handler.execute_query_and_fetch_result(query, (reservationID, datetime.now()))
+
+    def post_cancel_reservation(self, reservationID):
+        query="""SELECT "ID" FROM "Ticket" WHERE "ReservationID"=%s"""
+        ticketID = self.db_handler.execute_query_and_fetch_result(query, (reservationID,))[0][0]
+        query="""INSERT INTO "CanceledTicket" ("bank_account", "date","TicketReservationID") VALUES (%s, %s, %s)"""
+        self.db_handler.execute_query_and_fetch_result(query, ("345905678945678956",datetime.now(),ticketID,))
+
+    def get_client_by_email(self, email):
+        query = f"""
+        SELECT * FROM "Client"
+        WHERE "Client"."email"= %s
+        """
+        return self.db_handler.execute_query_and_fetch_result(query, (email,))
 
     def get_payment_servicse(self):
         query = f"""
