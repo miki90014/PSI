@@ -20,3 +20,5 @@ terraform.rc
 *.tfstate.*
 
 .terraform.lock.hcl
+
+.DS_store
