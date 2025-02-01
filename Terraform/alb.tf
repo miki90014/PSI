@@ -1,5 +1,5 @@
 resource "aws_lb" "cinema_alb" {
-  name               = "chat-alb"
+  name               = "cinema-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
@@ -48,7 +48,7 @@ resource "aws_lb_listener_rule" "customer_rule" {
 
   condition {
     path_pattern {
-      values = ["/api/customer*"]
+      values = ["/customer*"]
     }
   }
 }
@@ -63,7 +63,7 @@ resource "aws_lb_listener_rule" "employee_rule" {
   }
   condition {
     path_pattern {
-      values = ["/api/employee*"]
+      values = ["/employee*"]
     }
   }
 }

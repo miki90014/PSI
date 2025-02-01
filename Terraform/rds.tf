@@ -4,9 +4,11 @@ resource "aws_db_instance" "employee_db" {
   allocated_storage   = 20
   username            = var.rds_username
   password            = var.rds_password
-  publicly_accessible = false
   skip_final_snapshot = true
-  multi_az            = false
+
+  db_name                = "employee"
+  vpc_security_group_ids = [aws_security_group.rds-sg.id]
+  db_subnet_group_name   = aws_db_subnet_group.my_db_subnet_group.name
   tags = {
     Name = "employee-db"
   }
@@ -18,10 +20,20 @@ resource "aws_db_instance" "customer_db" {
   allocated_storage   = 20
   username            = var.rds_username
   password            = var.rds_password
-  publicly_accessible = false
   skip_final_snapshot = true
-  multi_az            = false
+
+  vpc_security_group_ids = [aws_security_group.rds-sg.id]
+  db_subnet_group_name   = aws_db_subnet_group.my_db_subnet_group.name
+  db_name                = "customer"
   tags = {
     Name = "customer-db"
   }
+}
+
+output "employee_endpoint" {
+  value = aws_db_instance.employee_db.endpoint
+}
+
+output "customer_endpoint" {
+  value = aws_db_instance.customer_db.endpoint
 }

@@ -58,6 +58,52 @@ resource "aws_api_gateway_deployment" "cinema_api_deployment" {
     aws_api_gateway_method.employee_method,
     aws_api_gateway_integration.customer_integration,
     aws_api_gateway_integration.employee_integration,
+    aws_api_gateway_method.proxy_method,          # Dodajemy proxy method
+    aws_api_gateway_integration.proxy_integration # Dodajemy proxy integration
   ]
   rest_api_id = aws_api_gateway_rest_api.cinema_api.id
 }
+
+
+resource "aws_api_gateway_stage" "cinema_stage" {
+  stage_name    = "v1"
+  rest_api_id   = aws_api_gateway_rest_api.cinema_api.id
+  deployment_id = aws_api_gateway_deployment.cinema_api_deployment.id
+}
+
+output "api_gateway_url" {
+  value = "https://${aws_api_gateway_rest_api.cinema_api.id}.execute-api.us-east-1.amazonaws.com/${aws_api_gateway_stage.cinema_stage.stage_name}"
+}
+
+resource "aws_api_gateway_resource" "proxy" {
+  rest_api_id = aws_api_gateway_rest_api.cinema_api.id
+  parent_id   = aws_api_gateway_rest_api.cinema_api.root_resource_id
+  path_part   = "{proxy+}"
+}
+
+resource "aws_api_gateway_method" "proxy_method" {
+  rest_api_id   = aws_api_gateway_rest_api.cinema_api.id
+  resource_id   = aws_api_gateway_resource.proxy.id
+  http_method   = "ANY"
+  authorization = "NONE"
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "proxy_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.cinema_api.id
+  resource_id             = aws_api_gateway_resource.proxy.id
+  http_method             = aws_api_gateway_method.proxy_method.http_method
+  integration_http_method = "ANY"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://${aws_lb.cinema_alb.dns_name}/{proxy}"
+
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+  }
+
+  depends_on = [aws_api_gateway_method.proxy_method]
+}
+
+

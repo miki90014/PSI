@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "backend-employee" {
   container_definitions = jsonencode([
     {
       name   = "backend-employee"
-      image  = "nginx:latest"
+      image  = "dockermaniac01/backend-cinema-image:20250130220328"
       cpu    = 512
       memory = 1024
 
@@ -36,6 +36,7 @@ resource "aws_ecs_task_definition" "backend-employee" {
         { name = "DATABASE_URL", value = var.rds_employee },
         { name = "POSTGRES_USER", value = var.rds_username },
         { name = "POSTGRES_PASSWORD", value = var.rds_password },
+        { name = "POSTGRES_DB", value = var.rds_dbname_employee },
       ]
       logConfiguration = {
         logDriver = "awslogs"
@@ -62,20 +63,21 @@ resource "aws_ecs_task_definition" "backend-customer" {
   container_definitions = jsonencode([
     {
       name      = "backend-customer"
-      image     = "nginx:latest"
+      image     = "dockermaniac01/backend-cinema-image-customer:20250130221430"
       cpu       = 512
       memory    = 1024
       essential = true
       portMappings = [
         {
-          containerPort = 5000
-          hostPort      = 5000
+          containerPort = 5001
+          hostPort      = 5001
         }
       ]
       environment = [
-        { name = "DATABASE_URL", value = var.rds_employee },
+        { name = "DATABASE_URL", value = var.rds_customer },
         { name = "POSTGRES_USER", value = var.rds_username },
         { name = "POSTGRES_PASSWORD", value = var.rds_password },
+        { name = "POSTGRES_DB", value = var.rds_dbname_customer },
       ]
       logConfiguration = {
         logDriver = "awslogs"
@@ -126,6 +128,6 @@ resource "aws_ecs_service" "backend-customer_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.backend-customer_tg.arn
     container_name   = "backend-customer"
-    container_port   = 5000
+    container_port   = 5001
   }
 }

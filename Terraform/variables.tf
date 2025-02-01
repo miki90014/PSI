@@ -19,13 +19,11 @@ variable "rds_engine" {
 }
 
 variable "rds_password" {
-  type    = string
-  default = "postgres123"
+  type = string
 }
 
 variable "rds_username" {
-  type    = string
-  default = "postgres"
+  type = string
 }
 
 variable "rds_customer" {
@@ -35,3 +33,12 @@ variable "rds_customer" {
 variable "rds_employee" {
   type = string
 }
+
+variable "rds_dbname_employee" {
+  type = string
+}
+
+variable "rds_dbname_customer" {
+  type = string
+}
+
