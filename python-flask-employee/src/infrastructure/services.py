@@ -53,3 +53,77 @@ class DatabaseService:
         WHERE "Seat"."ID"=%s
         """
         return self.db_handler.execute_query_and_fetch_result(query, (id,))
+    
+    def get_cinemas_list(self):
+        query = """
+        SELECT "ID", "name", "address" FROM "Cinema"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_cinema_by_id(self, id):
+        query = f"""
+        SELECT "ID", "name", "address" 
+        FROM "Cinema"
+        WHERE "ID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_rooms_from_cinemas(self, id):
+        query = f"""
+        SELECT 
+            r."ID", 
+            r."name", 
+            r."number", 
+            COUNT(s."ID") AS "total_seats"
+        FROM 
+            "Room" r
+        LEFT JOIN 
+            "Seat" s ON s."RoomID" = r."ID"
+        WHERE 
+            r."CinemaID" = {id}
+        GROUP BY 
+            r."ID", r."name", r."number"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_room_with_total_seats(self, id):
+        query = f"""
+        SELECT 
+            r."ID", 
+            r."name", 
+            r."number", 
+            COUNT(s."ID") AS "total_seats"
+        FROM 
+            "Room" r
+        LEFT JOIN 
+            "Seat" s ON s."RoomID" = r."ID"
+        WHERE 
+            r."ID" = {id}
+        GROUP BY 
+            r."ID", r."name", r."number"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def save_room(self, name, number, cinemaID):
+        query = f"""
+        INSERT INTO "Room" ("name", "number", "CinemaID")
+        VALUES ('{name}', {number}, {cinemaID})
+        RETURNING "ID"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def update_room(self, name, number, room_id):
+        query = f"""
+        UPDATE "Room"
+        SET "name" = '{name}',
+            "number" = {number}
+        WHERE "ID" = {room_id};
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def save_seat(self, number, row, roomID):
+        query = f"""
+        INSERT INTO "Seat" ("number", "row", "RoomID")
+        VALUES ({number}, '{row}', {roomID})
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
