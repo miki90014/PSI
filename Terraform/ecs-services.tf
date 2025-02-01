@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "backend-employee" {
   container_definitions = jsonencode([
     {
       name   = "backend-employee"
-      image  = "dockermaniac01/backend-cinema-image:20250130220328"
+      image  = "dockermaniac01/backend-cinema-image:20250201132918"
       cpu    = 512
       memory = 1024
 
@@ -63,7 +63,7 @@ resource "aws_ecs_task_definition" "backend-customer" {
   container_definitions = jsonencode([
     {
       name      = "backend-customer"
-      image     = "dockermaniac01/backend-cinema-image-customer:20250130221430"
+      image     = "dockermaniac01/backend-cinema-image-customer:20250201125244"
       cpu       = 512
       memory    = 1024
       essential = true

@@ -81,3 +81,15 @@ output "s3_bucket_name" {
 output "website_endpoint" {
   value = aws_s3_bucket_website_configuration.example.website_endpoint
 }
+
+resource "aws_s3_bucket_cors_configuration" "frontend_cinema_cors" {
+  bucket = aws_s3_bucket.frontend_cinema.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "PUT", "POST", "DELETE"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
