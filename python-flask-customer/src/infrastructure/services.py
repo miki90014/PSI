@@ -121,7 +121,9 @@ class DatabaseService:
         SELECT 
             t."ID" AS ticket_id,
             t."verified" as verfified,
-            s."Date" AS showing_date
+            s."Date" AS showing_date,
+            s."RoomID" as room_id,
+            s."MovieID" as movie_id
         FROM 
             "Ticket" t
         JOIN 
@@ -142,3 +144,10 @@ class DatabaseService:
         WHERE "ID" = {id}
         """
         return self.db_handler.execute_query(query)
+    
+    def get_reservation_id_from_code(self, code):
+        query = f"""
+        SELECT "ID" FROM "Reservation"
+        WHERE "Reservation"."code"='{code}'
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)

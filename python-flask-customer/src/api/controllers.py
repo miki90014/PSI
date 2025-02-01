@@ -166,14 +166,20 @@ def check_ticket(code):
     logger.info(f"Bilet: {result}")
 
     if result:
-        ticket_id, verified, showing_date = result[0]
+        ticket_id, verified, showing_date, room_id, movie_id = result[0]
         logger.info(f"ID biletu: {ticket_id}, Verfified: {verified}, Data seansu: {showing_date}")
         time_limit = showing_date + timedelta(minutes=15)
         current_time = datetime.now()
 
         if verified == 'F' and current_time < time_limit:
             db_service.update_ticket(ticket_id)
-            return {"success": "Bilet został pomyślnie zweryfikowany."}, 200
+            reservatioID = db_service.get_reservation_id_from_code(code)
+            seats = db_service.get_seats_of_reservation(reservatioID[0][0]) 
+            return (
+        jsonify({"message": "Bilet został pomyślnie zweryfikowany.", "ticket_id": ticket_id, "showing_date": showing_date,
+                 "room_id": room_id, "movie_id": movie_id, "seats": seats}),
+        200,
+    )
     else:
         return {"error": "Bilet nie istnieje."}, 500
 
