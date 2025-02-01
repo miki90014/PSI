@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Form, Button, Alert } from 'react-bootstrap';  // Importujemy komponenty Bootstrap
 
 function TicketChecking() {
   const [ticketCode, setTicketCode] = useState('');
@@ -8,14 +9,12 @@ function TicketChecking() {
   const checkTicket = async () => {
     setMessage(null);
 
-    // Jeśli kod biletu jest pusty
     if (!ticketCode.trim()) {
       setMessage({ type: 'error', text: 'Wpisz kod biletu!' });
       return;
     }
 
     try {
-      // Wysyłanie zapytania do backendu
       const response = await fetch(`${API_BASE_URL}/check_ticket/${ticketCode}`, {
         method: 'GET',
       });
@@ -33,20 +32,29 @@ function TicketChecking() {
   };
 
   return (
-    <div className="ticket-checking-container">
-      <h2>Sprawdzanie Biletów</h2>
-      <input
-        type="text"
-        placeholder="Wpisz kod biletu"
-        value={ticketCode}
-        onChange={(e) => setTicketCode(e.target.value)}
-      />
-      <button onClick={checkTicket}>Sprawdź bilet</button>
+    <div className="ticket-checking-container" style={{ maxWidth: '500px', margin: '0 auto' }}>
+      <h2 className="text-center mb-4">Sprawdzanie Biletów</h2>
+
+      <Form>
+        <Form.Group controlId="ticketCode">
+          <Form.Label>Wpisz kod biletu</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Wpisz kod biletu"
+            value={ticketCode}
+            onChange={(e) => setTicketCode(e.target.value)}
+          />
+        </Form.Group>
+
+        <Button variant="primary" onClick={checkTicket} block>
+          Sprawdź bilet
+        </Button>
+      </Form>
 
       {message && (
-        <p className={message.type === 'success' ? 'success-message' : 'error-message'}>
+        <Alert variant={message.type === 'success' ? 'success' : 'danger'} className="mt-3">
           {message.text}
-        </p>
+        </Alert>
       )}
     </div>
   );

@@ -14,20 +14,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Strona logowania (jeśli potrzebujesz logowania, dodaj ją tutaj) */}
         <Route path="/" element={<Login />} />
-        
-        {/* Strona główna po zalogowaniu */}
         <Route path="/home" element={<Home />} />
-
-        {/* Strona z NavBar */}
         <Route path="/attendance" element={<><NavBar /><Attendance /></>} />
         <Route path="/cinema-management" element={<><NavBar /><CinemaManagement /></>} />
         <Route path="/film-management" element={<><NavBar /><FilmManagement /></>} />
         <Route path="/tickets" element={<><NavBar /><TicketChecking /></>} />
-        <Route path="/cinema/:id" element={<CinemaDetails />} />
-        <Route path="/cinema/:cinemaId/room/add" element={<RoomForm isEditMode={false} />} />
-        <Route path="/cinema/:cinemaId/room/:roomId/edit" element={<RoomForm isEditMode={true} />} />
+        <Route path="/cinema/:id" element={<><NavBar /><CinemaDetails /></>} />
+        <Route path="/cinema/:cinemaId/room/add" element={<><NavBar /><RoomForm isEditMode={false} /></>} />
+        <Route path="/cinema/:cinemaId/room/:roomId/edit" element={<><NavBar /><RoomForm isEditMode={true} /></>} />
 
       </Routes>
     </Router>

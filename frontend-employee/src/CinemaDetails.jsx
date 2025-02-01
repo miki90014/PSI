@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; 
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; 
+import { Spinner, Alert, Card, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 function CinemaDetails() {
   const { id } = useParams();
@@ -9,15 +9,12 @@ function CinemaDetails() {
   const [loading, setLoading] = useState(true); // Stan kontrolujący ładowanie
   const [error, setError] = useState(null); // Stan na błędy
   const API_BASE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL; // URL do backendu, wczytywane z pliku .env
-  console.log(API_BASE_URL)
-  console.log(id)
 
   // Fetching cinema and rooms data when component is mounted
   useEffect(() => {
     const fetchCinemaDetails = async () => {
       try {
         // Fetch cinema details
-        console.log(id)
         const cinemaResponse = await fetch(`${API_BASE_URL}/cinema/${id}`);
         if (!cinemaResponse.ok) {
           throw new Error('Nie udało się pobrać szczegółów kina');
@@ -45,8 +42,8 @@ function CinemaDetails() {
   // Renderowanie stanu ładowania
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <Spinner animation="border" variant="primary" />
       </div>
     );
   }
@@ -54,37 +51,46 @@ function CinemaDetails() {
   // Renderowanie błędów
   if (error) {
     return (
-      <div className="error-container">
-        <h2>Błąd</h2>
-        <p>{error}</p>
+      <div className="container mt-5">
+        <Alert variant="danger">
+          <h4>Błąd</h4>
+          <p>{error}</p>
+        </Alert>
       </div>
     );
   }
 
   return (
-    <div className="cinema-details-container">
+    <div className="container mt-5">
       {cinema && (
         <>
-          <h1 className="cinema-title">{cinema.name}</h1>
-          <p className="cinema-address">{cinema.address}</p>
-
-          <Link to={`/cinema/${id}/room/add`} className="add-room-button">
-            Dodaj salę
-          </Link>
+          <Card className="mb-4">
+            <Card.Body>
+              <Card.Title>{cinema.name}</Card.Title>
+              <Card.Text>{cinema.address}</Card.Text>
+              <Link to={`/cinema/${id}/room/add`}>
+                <Button variant="success">Dodaj salę</Button>
+              </Link>
+            </Card.Body>
+          </Card>
 
           <h2>Sale kinowe</h2>
-          <ul className="rooms-list">
+          <ListGroup>
             {rooms.map((room) => (
-              <li key={room.ID} className="room-item">
-                <h3>{room.number}</h3>
-                <h3>{room.name}</h3>
-                <p>{room.total_seats} miejsc</p>
-                <Link to={`/cinema/${id}/room/${room.ID}/edit`} className="edit-room-button">
-                Edytuj
-                </Link>
-              </li>
+              <ListGroupItem key={room.ID}>
+                <Card>
+                  <Card.Body>
+                    <Card.Title>Numer: {room.number}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{room.name}</Card.Subtitle>
+                    <Card.Text>{room.total_seats} miejsc</Card.Text>
+                    <Link to={`/cinema/${id}/room/${room.ID}/edit`}>
+                      <Button variant="warning">Edytuj</Button>
+                    </Link>
+                  </Card.Body>
+                </Card>
+              </ListGroupItem>
             ))}
-          </ul> 
+          </ListGroup>
         </>
       )}
     </div>

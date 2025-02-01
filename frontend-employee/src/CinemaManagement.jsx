@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Spinner, Alert, Card, Button, ListGroup } from 'react-bootstrap';  // Importowanie komponentów Bootstrap
 
 function CinemaManagement() {
-  console.log("Starting app")
   const [cinemas, setCinemas] = useState([]);  // Stan przechowujący listę kin
   const [loading, setLoading] = useState(true); // Stan kontrolujący ładowanie
   const [error, setError] = useState(null); // Stan na błędy
   const API_BASE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL; // URL do backendu, wczytywane z pliku .env
-  console.log(API_BASE_URL)
+
   // Funkcja do pobrania danych o kinach
   useEffect(() => {
     const fetchCinemas = async () => {
@@ -17,7 +17,6 @@ function CinemaManagement() {
           throw new Error('Nie udało się pobrać kin');
         }
         const data = await response.json();
-        console.log(data)
         setCinemas(data);
       } catch (err) {
         setError(err.message);
@@ -32,8 +31,8 @@ function CinemaManagement() {
   // Renderowanie stanu ładowania
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <Spinner animation="border" variant="primary" />
       </div>
     );
   }
@@ -41,28 +40,33 @@ function CinemaManagement() {
   // Renderowanie błędów
   if (error) {
     return (
-      <div className="error-container">
-        <h2>Błąd</h2>
-        <p>{error}</p>
+      <div className="container mt-5">
+        <Alert variant="danger">
+          <h4>Błąd</h4>
+          <p>{error}</p>
+        </Alert>
       </div>
     );
   }
 
   return (
-    <div className="cinemas-container">
-      <h1 className="page-title">Zarządzanie Kinami</h1>
-      <ul className="cinemas-list">
+    <div className="container mt-5">
+      <h1 className="mb-4">Zarządzanie Kinami</h1>
+      <ListGroup>
         {cinemas.map((cinema) => (
-          <li key={cinema.ID} className="cinema-item">
-            <h3>{cinema.name}</h3>
-            <p>{cinema.address}</p>
-            {/* Link do szczegółów kina */}
-            <Link to={`/cinema/${cinema.ID}`} className="details-link">
-              Zobacz szczegóły
-            </Link>
-          </li>
+          <ListGroup.Item key={cinema.ID}>
+            <Card>
+              <Card.Body>
+                <Card.Title>{cinema.name}</Card.Title>
+                <Card.Text>{cinema.address}</Card.Text>
+                <Link to={`/cinema/${cinema.ID}`} className="btn btn-primary">
+                  Zobacz szczegóły
+                </Link>
+              </Card.Body>
+            </Card>
+          </ListGroup.Item>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 }

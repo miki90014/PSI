@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 
 function RoomForm({ isEditMode = false }) {
-  const { cinemaId, roomId } = useParams(); // Pobranie cinemaId i roomId z URL
+  const { cinemaId, roomId } = useParams();
   const API_BASE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
   const [room, setRoom] = useState({
     name: '',
     number: '',
     total_seats: '',
   });
-  const navigate = useNavigate(); // Przekierowanie po zapisaniu
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isEditMode && roomId) {
       const fetchRoomData = async () => {
         try {
-          // Fetch room data based on cinemaId and roomId
           const response = await fetch(`${API_BASE_URL}/cinema/room/${roomId}`);
           if (!response.ok) {
             throw new Error('Nie udało się pobrać danych sali');
@@ -24,15 +25,16 @@ function RoomForm({ isEditMode = false }) {
           setRoom({
             name: roomData.name,
             number: roomData.number,
-            total_seats: roomData.total_seats, // Liczba miejsc tylko do odczytu
+            total_seats: roomData.total_seats,
           });
         } catch (err) {
+          setError('Nie udało się pobrać danych sali');
           console.error(err);
         }
       };
       fetchRoomData();
     }
-  }, [cinemaId, roomId, isEditMode]); // Trigger the fetch when cinemaId or roomId changes
+  }, [cinemaId, roomId, isEditMode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,77 +46,87 @@ function RoomForm({ isEditMode = false }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEditMode) {
-      // Edycja sali
-      const response = await fetch(`${API_BASE_URL}/cinema/room/${roomId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(room),
-      });
+    try {
+      let response;
+      if (isEditMode) {
+        // Edycja sali
+        response = await fetch(`${API_BASE_URL}/cinema/room/${roomId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(room),
+        });
+      } else {
+        // Dodanie nowej sali
+        response = await fetch(`${API_BASE_URL}/cinema/${cinemaId}/room`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(room),
+        });
+      }
 
       if (response.ok) {
-        navigate(`/cinema/${cinemaId}`); // Powrót do strony szczegółów kina
+        navigate(`/cinema/${cinemaId}`);
       } else {
-        alert('Błąd przy edycji sali');
+        setError('Błąd przy zapisywaniu sali');
       }
-    } else {
-      // Dodanie nowej sali
-      const response = await fetch(`${API_BASE_URL}/cinema/${cinemaId}/room`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(room),
-      });
-
-      if (response.ok) {
-        navigate(`/cinema/${cinemaId}`); // Powrót do strony szczegółów kina
-      } else {
-        alert('Błąd przy dodawaniu sali');
-      }
+    } catch (err) {
+      setError('Błąd przy zapisywaniu sali');
+      console.error(err);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="name">Nazwa sali:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={room.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="number">Numer sali:</label>
-        <input
-          type="number"
-          id="number"
-          name="number"
-          value={room.number}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="total_seats">Liczba miejsc:</label>
-        <input
-          type="number"
-          id="total_seats"
-          name="total_seats"
-          value={room.total_seats}
-          onChange={handleChange}
-          disabled={isEditMode} // Zablokowane w trybie edycji
-          required
-        />
-      </div>
-      <button type="submit">{isEditMode ? 'Zapisz zmiany' : 'Dodaj salę'}</button>
-    </form>
+    <Container className="mt-5">
+      <Row>
+        <Col md={{ span: 6, offset: 3 }}>
+          <h2>{isEditMode ? 'Edytuj salę' : 'Dodaj salę'}</h2>
+          {error && <Alert variant="danger">{error}</Alert>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="name" className="mb-3">
+              <Form.Label>Nazwa sali:</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={room.name}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="number" className="mb-3">
+              <Form.Label>Numer sali:</Form.Label>
+              <Form.Control
+                type="number"
+                name="number"
+                value={room.number}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="total_seats" className="mb-3">
+              <Form.Label>Liczba miejsc:</Form.Label>
+              <Form.Control
+                type="number"
+                name="total_seats"
+                value={room.total_seats}
+                onChange={handleChange}
+                disabled={isEditMode}
+                required
+              />
+            </Form.Group>
+
+            <Button variant="primary" type="submit" block>
+              {isEditMode ? 'Zapisz zmiany' : 'Dodaj salę'}
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
