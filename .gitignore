@@ -6,3 +6,19 @@
 __pycache__/
 .venv/
 
+# Terraform
+*.tfvars
+.terraformrc
+terraform.rc
+.terraform.tfstate.lock.info
+
+# Local .terraform directories
+**/.terraform/*
+.terraform/*
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+.terraform.lock.hcl
+
+.DS_store
