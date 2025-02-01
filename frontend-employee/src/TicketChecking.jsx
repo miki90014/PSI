@@ -8,22 +8,22 @@ function TicketChecking() {
   const checkTicket = async () => {
     setMessage(null);
 
+    // Jeśli kod biletu jest pusty
     if (!ticketCode.trim()) {
       setMessage({ type: 'error', text: 'Wpisz kod biletu!' });
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/check-ticket`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticketCode }),
+      // Wysyłanie zapytania do backendu
+      const response = await fetch(`${API_BASE_URL}/check_ticket/${ticketCode}`, {
+        method: 'GET',
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: 'success', text: `Bilet ważny: ${data.details}` });
+        setMessage({ type: 'success', text: `Bilet zweryfikowany: ${data.success || data.details}` });
       } else {
         setMessage({ type: 'error', text: data.error || 'Bilet jest nieważny lub nie istnieje.' });
       }

@@ -115,3 +115,30 @@ class DatabaseService:
         WHERE "Reservation"."ID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_ticket(self, code):
+        query = f"""
+        SELECT 
+            t."ID" AS ticket_id,
+            t."verified" as verfified,
+            s."Date" AS showing_date
+        FROM 
+            "Ticket" t
+        JOIN 
+            "Reservation" r ON t."ReservationID" = r."ID"
+        JOIN 
+            "AvailableSeats" a ON r."ID" = a."ReservationID"
+        JOIN 
+            "Showing" s ON a."ShowingID" = s."ID"
+        WHERE 
+            r."code" = '{code}';
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def update_ticket(self, id):
+        query = f"""
+        UPDATE "Ticket"
+        SET "verified" = 'T'
+        WHERE "ID" = {id}
+        """
+        return self.db_handler.execute_query(query)
