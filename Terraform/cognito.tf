@@ -1,6 +1,3 @@
-provider "aws" {
-  region = "us-east-1"
-}
 resource "aws_cognito_user_pool" "cinema_user_pool" {
   name = "cinema_user_pool"
 
@@ -25,7 +22,7 @@ resource "aws_cognito_user_pool_client" "cinema_user_pool_client" {
 }
 
 resource "aws_cognito_user_pool_domain" "cinema_user_pool_domain" {
-  domain       = "cinema-user-pool-domain"
+  domain       = "cinema-user-pool-domain-project"
   user_pool_id = aws_cognito_user_pool.cinema_user_pool.id
 }
 

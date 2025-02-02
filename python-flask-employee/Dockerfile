@@ -1,8 +1,5 @@
 FROM python:3.10-slim
-ENV BACKEND_PORT=5000
-ENV DATABASE_URL=${DATABASE_URL}
-ENV POSTGRES_USER=${POSTGRES_USER}
-ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
 ENV SQL_PATH=/usr/src/app/employee.sql
 ENV SQL_DATA_PATH=/usr/src/app/data.sql
 RUN apt-get update && apt-get install -y \
@@ -19,5 +16,5 @@ COPY scripts/data.sql ./
 # COPY credentials /root/.aws/credentials
 
 COPY src ./
-EXPOSE ${BACKEND_PORT}
+EXPOSE 5000
 CMD ["python", "main.py"]
