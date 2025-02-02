@@ -151,3 +151,32 @@ class DatabaseService:
         WHERE "Reservation"."code"='{code}'
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_showings(self):
+        query = f"""
+        SELECT "ID", "Date", "RoomID", "MovieID" FROM "Showing"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_forms(self):
+        query = f"""
+        SELECT * FROM "Form"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def add_showing(self, data):
+        query = f"""
+        INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID", "MovieID") VALUES
+            ('{data['date']}', {data['price']}, {data['formatId']}, {data['programId']}, {data['roomId']}, {data['movieId']})
+        RETURNING "ID";
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def add_available_seats(self, seat_id, showingId):
+        query = f"""
+        INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID", "ReservationID") VALUES
+        ('T', {seat_id}, {showingId}, NULL)
+        RETURNING "ID";
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    

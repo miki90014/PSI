@@ -208,3 +208,16 @@ def save_room(id):
         jsonify({"message": "Saved successful", "roomD": room_id}),
         200,
     )
+
+@api.route("/cinema/<id>/programs", methods=["GET"])
+def get_programs_by_cinema(id):
+    from main import db_service
+
+    programs = db_service.get_program_by_cinema(id)
+    logger.info(f"Fetched programs of id: {id}.")
+    programs_data = []
+
+    for program in programs:
+        program_dict = {"ID": program[0],"start_date": program[1], "end_date": program[2], "CinemaID": program[3]}
+        programs_data.append(program_dict)
+    return programs_data
