@@ -27,11 +27,11 @@ async function cancelReservation(reservationId) {
   }
 }
 
-export function TicketsView() {
+export function TicketsView({ setAccessToken }) {
   const [reservations, setReservations] = useState([]);
   const [transactions, setTransactions] = useState([]);
   async function updateReservationsAfterChanges() {
-    const clientId = 1;
+    const clientId = 1; //<---------------------------------------------------- Client change here
     fetchReservations(clientId).then((data) => {
       setReservations(data.filter((reservation) => reservation.price == null));
       setTransactions(data.filter((reservation) => reservation.price != null));
@@ -96,7 +96,7 @@ export function TicketsView() {
     </div>
   ));
   return (
-    <div className="tickets-view-side">
+    <>
       <div className="nav-bar">
         <ul>
           <li>
@@ -118,16 +118,18 @@ export function TicketsView() {
           </li>
         </ul>
       </div>
-      <div className="tickets-view">
-        <div className="reservations">
-          <h3>Rezerwacje</h3>
-          <div className="reservations-list">{listOfReservations}</div>
-        </div>
-        <div className="transactions-history">
-          <h3>Historia zakupów</h3>
-          <div className="transactions-list">{listOfTransactions}</div>
+      <div className="tickets-view-side">
+        <div className="tickets-view">
+          <div className="reservations">
+            <h3>Rezerwacje</h3>
+            <div className="reservations-list">{listOfReservations}</div>
+          </div>
+          <div className="transactions-history">
+            <h3>Historia zakupów</h3>
+            <div className="transactions-list">{listOfTransactions}</div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

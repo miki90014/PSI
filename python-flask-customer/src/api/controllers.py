@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify, request, send_file
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
+from datetime import datetime, timedelta
 
 api = Blueprint("api", __name__, url_prefix="/customer")
 
@@ -181,3 +182,118 @@ def get_code(id):
 @api.route("/test_performance", methods=["GET"])
 def test_performance():
     return {}
+
+
+@api.route("/check_ticket/<code>", methods=["GET"])
+def check_ticket(code):
+    from main import db_service
+
+    logger.info(f"Checking ticket: {code}.")
+
+    result = db_service.get_ticket(code)
+    logger.info(f"Bilet: {result}")
+
+    if result:
+        ticket_id, verified, showing_date, room_id, movie_id = result[0]
+        logger.info(f"ID biletu: {ticket_id}, Verfified: {verified}, Data seansu: {showing_date}")
+        time_limit = showing_date + timedelta(minutes=15)
+        current_time = datetime.now()
+
+        if verified == 'F' and current_time < time_limit:
+            db_service.update_ticket(ticket_id)
+            reservatioID = db_service.get_reservation_id_from_code(code)
+            seats = db_service.get_seats_of_reservation(reservatioID[0][0]) 
+            return (
+        jsonify({"message": "Bilet został pomyślnie zweryfikowany.", "ticket_id": ticket_id, "showing_date": showing_date,
+                 "room_id": room_id, "movie_id": movie_id, "seats": seats}),
+        200,
+    )
+    else:
+        return {"error": "Bilet nie istnieje."}, 500
+
+    return {"error": "Bilet jest nieaktualny."}, 500
+
+@api.route("/showings", methods=["GET"])
+def get_all_showings():
+    from main import db_service
+
+    logger.info(f"Id of program: {id}.")
+    showings = db_service.get_showings()
+    logger.info(f"Fetched movie showings")
+
+    if not showings:
+        return jsonify({"error": "Brak seansów"}), 404
+
+    # Konwersja danych na JSON
+    showings_list = [
+        {"ID": s[0], "Date": s[1], "RoomID": s[2], "MovieID": s[3]}
+        for s in showings
+    ]
+
+    return jsonify(showings_list), 200
+
+@api.route("/forms", methods=["GET"])
+def get_all_forms():
+    from main import db_service
+
+    forms = db_service.get_forms()
+    logger.info(f"Fetched forms")
+
+    if not forms:
+        return jsonify({"error": "Brak formatów"}), 404
+
+    # Konwersja danych na JSON
+    forms_list = [
+        {"ID": s[0], "movieFormName": s[1]}
+        for s in forms
+    ]
+
+    return jsonify(forms_list), 200
+
+
+@api.route("/showing/add", methods=["POST"])
+def add_showing():
+    from main import db_service
+
+    data = request.get_json()
+    logger.info(data)
+
+    if not data:
+        logger.info("Could not read json data. Invalid JSON format")
+        return jsonify({"error": "Invalid JSON format"}), 400
+    showing_id_res = db_service.add_showing(data)
+    showing_id = showing_id_res[0][0]
+
+    available_seats = []
+
+    if 'seats' in data:
+        seat_ids = data['seats']  # Lista seatId
+        for seat_id in seat_ids:
+            seat_id_added = db_service.add_available_seats(seat_id['ID'], showing_id)
+            available_seats.append(seat_id_added)
+
+    logger.info(f"Available seats: {available_seats}")
+    return (
+            jsonify({"message": "Saved successful", "showing_id": showing_id}),
+            200,
+        )
+
+
+@api.route("/showings/attendance/<id>", methods=["GET"])
+def get_showings_by_movie_with_attandance(id):
+    from main import db_service
+
+    showings = db_service.get_showings_by_movie_with_attandance(id)
+    logger.info(f"Fetched movie showings")
+
+    if not showings:
+        return jsonify({"error": "Brak seansów"}), 404
+
+    # Konwersja danych na JSON
+    showings_list = [
+        {"ID": s[0], "Date": s[1], "RoomID": s[2], "Attandance": s[3]}
+        for s in showings
+    ]
+    logger.info(f"Showings with attandance: {showings_list}")
+
+    return jsonify(showings_list), 200

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { cognitoChangePassword, cognitoChangeUserAttributes, cognitoGetUserData } from "./cognito";
-import "./UserData.css";
 
-export function UserData({ accessToken }) {
+export function UserData({ accessToken, setAccessToken }) {
   const [names, setNames] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -95,11 +94,11 @@ export function UserData({ accessToken }) {
             )}
             <label htmlFor="username">Nazwa użytkownika</label>
             <p>{username}</p>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Adres e-mail</label>
             {isEditing ? (
               <>
                 <br />
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}></input>
+                <input type="email" placeholder="Adres e-mail" value={email} onChange={(e) => setEmail(e.target.value)}></input>
                 <br />
               </>
             ) : (
@@ -109,7 +108,7 @@ export function UserData({ accessToken }) {
             {isEditing ? (
               <>
                 <br />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input> <br />
+                <input type="password" placeholder="Stare hasło" value={password} onChange={(e) => setPassword(e.target.value)}></input> <br />
               </>
             ) : (
               <p>********</p>
@@ -119,13 +118,13 @@ export function UserData({ accessToken }) {
                 <label htmlFor="newPassword">Nowe hasło</label>
                 <>
                   <br />
-                  <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}></input>
+                  <input type="password" placeholder="Nowe hasło" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}></input>
                   <br />
                 </>
                 <label htmlFor="confirmNewPassword">Potwierdź nowe hasło</label>
                 <>
                   <br />
-                  <input type="password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)}></input>
+                  <input type="password" placeholder="Potwierdź nowe hasło" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)}></input>
                   <br />
                 </>
               </>

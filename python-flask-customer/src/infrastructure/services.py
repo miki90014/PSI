@@ -133,3 +133,89 @@ class DatabaseService:
         WHERE "Reservation"."ID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_ticket(self, code):
+        query = f"""
+        SELECT 
+            t."ID" AS ticket_id,
+            t."verified" as verfified,
+            s."Date" AS showing_date,
+            s."RoomID" as room_id,
+            s."MovieID" as movie_id
+        FROM 
+            "Ticket" t
+        JOIN 
+            "Reservation" r ON t."ReservationID" = r."ID"
+        JOIN 
+            "AvailableSeats" a ON r."ID" = a."ReservationID"
+        JOIN 
+            "Showing" s ON a."ShowingID" = s."ID"
+        WHERE 
+            r."code" = '{code}';
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def update_ticket(self, id):
+        query = f"""
+        UPDATE "Ticket"
+        SET "verified" = 'T'
+        WHERE "ID" = {id}
+        """
+        return self.db_handler.execute_query(query)
+    
+    def get_reservation_id_from_code(self, code):
+        query = f"""
+        SELECT "ID" FROM "Reservation"
+        WHERE "Reservation"."code"='{code}'
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_showings(self):
+        query = f"""
+        SELECT "ID", "Date", "RoomID", "MovieID" FROM "Showing"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_forms(self):
+        query = f"""
+        SELECT * FROM "Form"
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def add_showing(self, data):
+        query = f"""
+        INSERT INTO "Showing" ("Date", "Price", "FormID", "ProgramID", "RoomID", "MovieID") VALUES
+            ('{data['date']}', {data['price']}, {data['formatId']}, {data['programId']}, {data['roomId']}, {data['movieId']})
+        RETURNING "ID";
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def add_available_seats(self, seat_id, showingId):
+        query = f"""
+        INSERT INTO "AvailableSeats" ("Available", "SeatseatID", "ShowingID", "ReservationID") VALUES
+        ('T', {seat_id}, {showingId}, NULL)
+        RETURNING "ID";
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_showings_by_movie_with_attandance(self, movieID):
+        query = f"""
+        SELECT 
+            s."ID", 
+            s."Date", 
+            s."RoomID", 
+            COALESCE(
+                ROUND(
+                    (COUNT(CASE WHEN a."ReservationID" IS NOT NULL THEN 1 END) * 100.0) 
+                    / NULLIF(COUNT(a."ID"), 0), 
+                    2
+                ), 
+                0.0
+            ) AS "Attendance"
+        FROM "Showing" s
+        LEFT JOIN "AvailableSeats" a ON s."ID" = a."ShowingID"
+        WHERE s."MovieID" = {movieID}
+        GROUP BY s."ID", s."Date", s."RoomID";
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
