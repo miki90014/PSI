@@ -190,6 +190,19 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["start_date"], "2024-06-01")
 
+    @patch("main.db_service.get_cinema_by_room")
+    def test_get_cinema_by_room(self, mock_get_cinema_by_room):
+        mock_get_cinema_by_room.return_value = [(1, "Cinema One", "123 Street")]
+
+        response = self.client.get("/employee/room/1/cinema")
+
+        self.assertEqual(response.status_code, 200)
+
+        response_json = response.get_json()
+        self.assertEqual(response_json["ID"], 1)
+        self.assertEqual(response_json["name"], "Cinema One")
+        self.assertEqual(response_json["address"], "123 Street")
+
 
 if __name__ == "__main__":
     unittest.main()
