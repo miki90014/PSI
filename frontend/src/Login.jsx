@@ -39,7 +39,12 @@ export function Login({ setAccessToken }) {
               console.log({ username, password });
               cognitoLogin(username, password)
                 .then((result) => {
-                  setAccessToken(result.AuthenticationResult.AccessToken);
+                  console.log(result);
+                  if (result.cognitoGroup !== "customer") {
+                    window.alert("You are not authorized to access this page");
+                    return;
+                  }
+                  setAccessToken(result.accessToken);
                   navigate("/client/login/userdata");
                 })
                 .catch((error) => window.alert(error.message));
