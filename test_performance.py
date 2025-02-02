@@ -34,14 +34,14 @@ class StagedLoadShape(LoadTestShape):
     """
 
     stages = [
-        {"duration": 30, "users": 10, "spawn_rate": 5},  # 10 użytkowników po 30 sek.
-        {"duration": 60, "users": 50, "spawn_rate": 10},  # 50 użytkowników po 60 sek.
-        {"duration": 90, "users": 100, "spawn_rate": 20},  # 100 użytkowników po 90 sek.
+        {"duration": 30, "users": 100, "spawn_rate": 5},  # 100 użytkowników po 30 sek.
+        {"duration": 60, "users": 200, "spawn_rate": 10},  # 200 użytkowników po 60 sek.
+        {"duration": 90, "users": 500, "spawn_rate": 20},  # 500 użytkowników po 90 sek.
         {
             "duration": 120,
-            "users": 200,
+            "users": 1000,
             "spawn_rate": 50,
-        },  # 200 użytkowników po 120 sek.
+        },  # 1000 użytkowników po 120 sek.
     ]
 
     def tick(self):

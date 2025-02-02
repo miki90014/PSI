@@ -3,7 +3,7 @@ from unittest.mock import patch
 from flask import Flask
 from api.controllers import (
     api,
-)  # assuming the Flask blueprint 'api' is imported from 'app'
+)
 import json
 
 
@@ -65,6 +65,46 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertEqual(response.json[0]["client"], "client1")
+
+    @patch("main.db_service.get_client_by_email")
+    def test_get_client_by_email(self, mock_get_client_by_email):
+        # Mock data
+        client_email = "test@example.com"
+        mock_client_data = (1, "John", "Doe", client_email, 42, "123456789")
+        mock_get_client_by_email.return_value = mock_client_data
+
+        response = self.client.get(f"/customer/client/{client_email}")
+        mock_get_client_by_email.assert_called_once_with(client_email)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.get_json(),
+            {
+                "ID": 1,
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": client_email,
+                "userID": 42,
+                "telephone_number": "123456789",
+            },
+        )
+
+    @patch("main.db_service.post_confirm_reservation")
+    def test_post_confirm_reservation(self, mock_confirm_reservation):
+        reservation_id = "123"
+        response = self.client.post(f"/customer/confirm_reservation/{reservation_id}")
+
+        mock_confirm_reservation.assert_called_once_with(reservation_id)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"message": "Reservation confirmed."})
+
+    @patch("main.db_service.post_cancel_reservation")
+    def test_post_cancel_reservation(self, mock_cancel_reservation):
+        reservation_id = "123"
+        response = self.client.post(f"/customer/cancel_reservation/{reservation_id}")
+
+        mock_cancel_reservation.assert_called_once_with(reservation_id)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"message": "Reservation canceled."})
 
     @patch("main.db_service.get_payment_servicse")
     def test_get_payment_services(self, mock_get_payment_servicse):

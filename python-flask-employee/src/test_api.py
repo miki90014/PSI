@@ -104,6 +104,92 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(response.json[0]["number"], 1)
         self.assertEqual(response.json[1]["row"], "B")
 
+    @patch("main.db_service.get_cinemas_list")
+    def test_list_cinemas(self, mock_get_cinemas_list):
+        mock_cinemas = [
+            (1, "Cinema One", "123 Street"),
+            (2, "Cinema Two", "456 Avenue"),
+        ]
+        mock_get_cinemas_list.return_value = mock_cinemas
+
+        response = self.client.get("/employee/cinemas")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 2)
+        self.assertEqual(response.json[0]["name"], "Cinema One")
+
+    @patch("main.db_service.get_cinema_by_id")
+    def test_get_cinema_by_id(self, mock_get_cinema_by_id):
+        mock_get_cinema_by_id.return_value = [(1, "Cinema One", "123 Street")]
+
+        response = self.client.get("/employee/cinema/1")
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["name"], "Cinema One")
+
+    @patch("main.db_service.get_rooms_from_cinemas")
+    def test_get_rooms_by_cinema(self, mock_get_rooms_from_cinemas):
+        mock_get_rooms_from_cinemas.return_value = [
+            (1, "Room A", 1, 50),
+            (2, "Room B", 2, 100),
+        ]
+
+        response = self.client.get("/employee/cinema/1/rooms")
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]["name"], "Room A")
+
+    @patch("main.db_service.get_room_with_total_seats")
+    def test_get_room_with_total_seats(self, mock_get_room_with_total_seats):
+        mock_get_room_with_total_seats.return_value = [(1, "Room A", 1, 50)]
+
+        response = self.client.get("/employee/cinema/room/1")
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["total_seats"], 50)
+
+    @patch("main.db_service.update_room")
+    def test_update_room(self, mock_update_room):
+        mock_update_room.return_value = 1
+        payload = {"name": "Updated Room", "number": 10}
+
+        response = self.client.put("/employee/cinema/room/1", json=payload)
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["roomID"], 1)
+
+    @patch("main.db_service.save_room")
+    @patch("main.db_service.save_seat")
+    def test_save_room(self, mock_save_seat, mock_save_room):
+        mock_save_room.return_value = [(1,)]
+        payload = {"name": "New Room", "number": 3, "total_seats": 10}
+
+        response = self.client.post("/employee/cinema/1/room", json=payload)
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data["roomD"], 1)
+        mock_save_seat.assert_called()
+
+    @patch("main.db_service.get_program_by_cinema")
+    def test_get_programs_by_cinema(self, mock_get_program_by_cinema):
+        mock_get_program_by_cinema.return_value = [
+            (1, "2024-06-01", "2024-06-10", 1),
+            (2, "2024-07-01", "2024-07-15", 1),
+        ]
+
+        response = self.client.get("/employee/cinema/1/programs")
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]["start_date"], "2024-06-01")
+
 
 if __name__ == "__main__":
     unittest.main()
