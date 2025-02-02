@@ -127,3 +127,12 @@ class DatabaseService:
         VALUES ({number}, '{row}', {roomID})
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_program_by_cinema(self, id):
+        query = f"""
+        SELECT *
+        FROM "Program"
+        WHERE "Program"."CinemaID"={id}
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+   

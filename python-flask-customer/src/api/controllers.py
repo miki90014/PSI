@@ -212,3 +212,69 @@ def check_ticket(code):
         return {"error": "Bilet nie istnieje."}, 500
 
     return {"error": "Bilet jest nieaktualny."}, 500
+
+@api.route("/showings", methods=["GET"])
+def get_all_showings():
+    from main import db_service
+
+    logger.info(f"Id of program: {id}.")
+    showings = db_service.get_showings()
+    logger.info(f"Fetched movie showings")
+
+    if not showings:
+        return jsonify({"error": "Brak seansów"}), 404
+
+    # Konwersja danych na JSON
+    showings_list = [
+        {"ID": s[0], "Date": s[1], "RoomID": s[2], "MovieID": s[3]}
+        for s in showings
+    ]
+
+    return jsonify(showings_list), 200
+
+@api.route("/forms", methods=["GET"])
+def get_all_forms():
+    from main import db_service
+
+    forms = db_service.get_forms()
+    logger.info(f"Fetched forms")
+
+    if not forms:
+        return jsonify({"error": "Brak formatów"}), 404
+
+    # Konwersja danych na JSON
+    forms_list = [
+        {"ID": s[0], "movieFormName": s[1]}
+        for s in forms
+    ]
+
+    return jsonify(forms_list), 200
+
+
+@api.route("/showing/add", methods=["POST"])
+def add_showing():
+    from main import db_service
+
+    data = request.get_json()
+    logger.info(data)
+
+    if not data:
+        logger.info("Could not read json data. Invalid JSON format")
+        return jsonify({"error": "Invalid JSON format"}), 400
+    showing_id_res = db_service.add_showing(data)
+    showing_id = showing_id_res[0][0]
+
+    available_seats = []
+
+    if 'seats' in data:
+        seat_ids = data['seats']  # Lista seatId
+        for seat_id in seat_ids:
+            seat_id_added = db_service.add_available_seats(seat_id['ID'], showing_id)
+            available_seats.append(seat_id_added)
+
+    logger.info(f"Available seats: {available_seats}")
+    return (
+            jsonify({"message": "Saved successful", "showing_id": showing_id}),
+            200,
+        )
+

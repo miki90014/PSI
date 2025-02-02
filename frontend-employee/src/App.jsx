@@ -9,6 +9,8 @@ import FilmManagement from './FilmManagement';  // Zarządzanie Seansami
 import TicketChecking from './TicketChecking';  // Sprawdzanie Biletów
 import CinemaDetails from './CinemaDetails';
 import RoomForm from './RoomForm';
+import ShowingForm from './ShowingForm';
+
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
         <Route path="/attendance" element={<><NavBar /><Attendance /></>} />
         <Route path="/cinema-management" element={<><NavBar /><CinemaManagement /></>} />
         <Route path="/film-management" element={<><NavBar /><FilmManagement /></>} />
+        <Route path="/showing/add" element={<><NavBar /><ShowingForm /></>} />
         <Route path="/tickets" element={<><NavBar /><TicketChecking /></>} />
         <Route path="/cinema/:id" element={<><NavBar /><CinemaDetails /></>} />
         <Route path="/cinema/:cinemaId/room/add" element={<><NavBar /><RoomForm isEditMode={false} /></>} />
