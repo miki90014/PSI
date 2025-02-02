@@ -135,4 +135,13 @@ class DatabaseService:
         WHERE "Program"."CinemaID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
+    
+    def get_cinema_by_room(self, roomId):
+        query = f"""
+        SELECT c.* 
+        FROM "Cinema" c
+        JOIN "Room" r ON c."ID" = r."CinemaID"
+        WHERE r."ID" = {roomId};
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
    
