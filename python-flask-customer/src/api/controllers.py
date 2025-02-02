@@ -278,3 +278,22 @@ def add_showing():
             200,
         )
 
+
+@api.route("/showings/attendance/<id>", methods=["GET"])
+def get_showings_by_movie_with_attandance(id):
+    from main import db_service
+
+    showings = db_service.get_showings_by_movie_with_attandance(id)
+    logger.info(f"Fetched movie showings")
+
+    if not showings:
+        return jsonify({"error": "Brak seansów"}), 404
+
+    # Konwersja danych na JSON
+    showings_list = [
+        {"ID": s[0], "Date": s[1], "RoomID": s[2], "Attandance": s[3]}
+        for s in showings
+    ]
+    logger.info(f"Showings with attandance: {showings_list}")
+
+    return jsonify(showings_list), 200
