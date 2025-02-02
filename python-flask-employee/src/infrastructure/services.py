@@ -135,4 +135,4 @@ class DatabaseService:
         WHERE "Program"."CinemaID"={id}
         """
         return self.db_handler.execute_query_and_fetch_result(query)
-    
+   

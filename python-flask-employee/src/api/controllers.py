@@ -209,6 +209,7 @@ def save_room(id):
         200,
     )
 
+
 @api.route("/cinema/<id>/programs", methods=["GET"])
 def get_programs_by_cinema(id):
     from main import db_service
@@ -221,3 +222,4 @@ def get_programs_by_cinema(id):
         program_dict = {"ID": program[0],"start_date": program[1], "end_date": program[2], "CinemaID": program[3]}
         programs_data.append(program_dict)
     return programs_data
+

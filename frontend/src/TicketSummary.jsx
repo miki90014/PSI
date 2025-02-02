@@ -1,4 +1,4 @@
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import { Container, Row, Col, Card, Button, ListGroup, Spinner, Alert } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 
@@ -112,7 +112,28 @@ export function TicketSummary() {
     };
 
     return (
-        <Container className="mt-5">
+      <Container>
+      <div className="nav-bar">
+        <ul>
+          <li>
+            <Link to="/client">Strona główna</Link>
+          </li>
+          <li>
+            <Link to="/client">Repertuar</Link>
+          </li>
+          <li>
+            <Link to="/client">Nasze kina</Link>
+          </li>
+          <li>
+            <Link className="active" to="/client/login/reservations">
+              Bilety
+            </Link>
+          </li>
+          <li>
+            <Link to="/client/login/userdata">Moje konto</Link>
+          </li>
+        </ul>
+      </div>
           <Row className="justify-content-center">
             <Col md={8}>
               <Card>

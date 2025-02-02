@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Col, Row, Container, Spinner, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; 
+import React, { useState, useEffect } from "react";
+import { Card, Col, Row, Container, Spinner, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export function Home() {
-  const [movies, setMovies] = useState([]);  // Stan na przechowywanie listy filmów
+  const [movies, setMovies] = useState([]); // Stan na przechowywanie listy filmów
   const [loading, setLoading] = useState(true); // Stan na kontrolowanie ładowania danych
   const [error, setError] = useState(null); // Stan na błędy
   const API_BASE_URL = import.meta.env.VITE_APP_API_EMPLOYEE_BASE_URL;
@@ -16,7 +16,7 @@ export function Home() {
       try {
         const response = await fetch(`${API_BASE_URL}/movies`); // Upewnij się, że API działa na tym porcie
         if (!response.ok) {
-          throw new Error('Nie udało się pobrać filmów');
+          throw new Error("Nie udało się pobrać filmów");
         }
         const data = await response.json();
         setMovies(data);
@@ -52,18 +52,39 @@ export function Home() {
 
   return (
     <Container>
+      <div className="nav-bar">
+        <ul>
+          <li>
+            <Link to="/client">Strona główna</Link>
+          </li>
+          <li>
+            <Link to="/client">Repertuar</Link>
+          </li>
+          <li>
+            <Link to="/client">Nasze kina</Link>
+          </li>
+          <li>
+            <Link className="active" to="/client/login/reservations">
+              Bilety
+            </Link>
+          </li>
+          <li>
+            <Link to="/client/login/userdata">Moje konto</Link>
+          </li>
+        </ul>
+      </div>
       <h1 className="my-4 text-center">Filmy</h1>
       <Row>
         {movies.map((movie) => (
           <Col key={movie.ID} xs={12} md={6} lg={4}>
             <Card className="mb-4">
-                <Card.Img variant="top" src={`${API_BASE_URL}/image/${movie.imageURL}`} alt={movie.title} height="600px;" style={{ objectFit: 'cover' }}/>
+              <Card.Img variant="top" src={`${API_BASE_URL}/image/${movie.imageURL}`} alt={movie.title} height="600px;" style={{ objectFit: "cover" }} />
               <Card.Body>
                 <Card.Title>{movie.title}</Card.Title>
                 <Link to={`/movie/${movie.ID}`}>
-                    <Card.Text>
-                      <small>Kliknij tutaj aby zobaczyć szczegóły</small>
-                    </Card.Text>
+                  <Card.Text>
+                    <small>Kliknij tutaj aby zobaczyć szczegóły</small>
+                  </Card.Text>
                 </Link>
               </Card.Body>
             </Card>
