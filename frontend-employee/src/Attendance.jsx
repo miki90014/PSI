@@ -40,12 +40,12 @@ function Attendance() {
             cinemaMap[cinemaData.ID] = {
               name: cinemaData.name,
               color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-              attendance: 0,  
+              attendance: [],  // Zmieniamy na tablicę
               count: 0
             };
           }
 
-          cinemaMap[cinemaData.ID].attendance += (Attandance || 0);
+          cinemaMap[cinemaData.ID].attendance.push(parseFloat(Attandance) || 0);  // Przechowujemy każde seansowe wartości
           cinemaMap[cinemaData.ID].count++;
 
           let existingEntry = formattedData.find(entry => entry.date === Date);
@@ -53,14 +53,7 @@ function Attendance() {
             existingEntry = { date: Date };
             formattedData.push(existingEntry);
           }
-
-          Object.entries(cinemaMap).forEach(([cinemaID, cinema]) => {
-            let averageAttendance = cinema.count ? (cinema.attendance / cinema.count) : 0;
-            if (isNaN(averageAttendance)) {
-                averageAttendance = 0;
-              }
-            existingEntry[`cinema_${cinemaID}`] = averageAttendance;
-          });
+          existingEntry[`cinema_${cinemaData.ID}`] = parseFloat(Attandance) || 0;
         }
 
         setCinemas(cinemaMap);
