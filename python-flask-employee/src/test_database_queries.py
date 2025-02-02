@@ -80,6 +80,97 @@ class TestDatabaseService(unittest.TestCase):
         self.assertEqual(result[0][0], 1)
         self.assertEqual(result[2][3], "F")
 
+    def test_get_seat_by_id(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (1, "A", 5, 10)
+        ]
+
+        result = self.db_service.get_seat_by_id(1)
+
+        self.assertEqual(result, [(1, "A", 5, 10)])
+
+    def test_get_cinemas_list(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (1, "Cinema One", "123 Street"),
+            (2, "Cinema Two", "456 Avenue"),
+        ]
+
+        result = self.db_service.get_cinemas_list()
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][1], "Cinema One")
+
+    def test_get_cinema_by_id(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (1, "Cinema One", "123 Street")
+        ]
+
+        result = self.db_service.get_cinema_by_id(1)
+
+        self.assertEqual(result, [(1, "Cinema One", "123 Street")])
+
+    def test_get_rooms_from_cinemas(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (1, "Room A", 1, 50),
+            (2, "Room B", 2, 100),
+        ]
+
+        result = self.db_service.get_rooms_from_cinemas(1)
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][1], "Room A")
+        self.mock_db_handler.execute_query_and_fetch_result.assert_called()
+
+    def test_get_room_with_total_seats(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (1, "Room A", 1, 50)
+        ]
+
+        result = self.db_service.get_room_with_total_seats(1)
+
+        self.assertEqual(result, [(1, "Room A", 1, 50)])
+        self.mock_db_handler.execute_query_and_fetch_result.assert_called()
+
+    def test_save_room(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (3,)
+        ]  # Nowy pokój z ID = 3
+
+        result = self.db_service.save_room("New Room", 3, 1)
+
+        self.assertEqual(result, [(3,)])
+        self.mock_db_handler.execute_query_and_fetch_result.assert_called()
+
+    def test_update_room(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = (
+            None  # UPDATE nie zwraca wartości
+        )
+
+        result = self.db_service.update_room("Updated Room", 5, 1)
+
+        self.assertIsNone(result)
+        self.mock_db_handler.execute_query_and_fetch_result.assert_called()
+
+    def test_save_seat(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = None
+
+        result = self.db_service.save_seat(5, "B", 2)
+
+        self.assertIsNone(result)
+        self.mock_db_handler.execute_query_and_fetch_result.assert_called()
+
+    def test_get_program_by_cinema(self):
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = [
+            (1, "2024-06-01", "2024-06-10", 1),
+            (2, "2024-07-01", "2024-07-15", 1),
+        ]
+
+        result = self.db_service.get_program_by_cinema(1)
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][1], "2024-06-01")
+        self.mock_db_handler.execute_query_and_fetch_result.assert_called()
+
 
 if __name__ == "__main__":
     unittest.main()

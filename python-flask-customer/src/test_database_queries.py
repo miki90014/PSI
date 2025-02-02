@@ -1,22 +1,20 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from datetime import datetime
 import uuid
 from infrastructure.services import (
     DatabaseService,
-)  # Zmiana na odpowiednią lokalizację klasy DatabaseService
+)
 
 
 class TestDatabaseService(unittest.TestCase):
 
     def setUp(self):
-        # Tworzymy mocka dla db_handler
         self.mock_db_handler = MagicMock()
-        # Tworzymy instancję klasy DatabaseService, przekazując mocka
         self.db_service = DatabaseService(self.mock_db_handler)
 
     def test_get_showings_of_movie(self):
-        # Ustawiamy mocka, aby zwrócił dane
+        # Mock data
         movie_id = 1
         mock_showings = [
             (1, "2025-01-01 12:00:00", 20.0, "2D", 1, 1),
@@ -24,10 +22,8 @@ class TestDatabaseService(unittest.TestCase):
         ]
         self.mock_db_handler.execute_query_and_fetch_result.return_value = mock_showings
 
-        # Wywołanie testowanej metody
         result = self.db_service.get_showings_of_movie(movie_id)
 
-        # Sprawdzamy, czy wynik jest poprawny
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0][0], 1)
         self.assertEqual(result[1][2], 25.0)
@@ -46,20 +42,57 @@ class TestDatabaseService(unittest.TestCase):
         self.assertEqual(result[0][1], "T")
         self.assertEqual(result[1][0], 2)
 
-    def test_get_all_reservations(self):
-        client_id = 1
-        mock_reservations = [
-            (1, 1, "2025-01-01 10:00:00", "sample_code", 1, 1, 20.0),
-        ]
-        self.mock_db_handler.execute_query_and_fetch_result.return_value = (
-            mock_reservations
+    @patch("infrastructure.services.datetime")
+    def test_post_confirm_reservation(self, mock_datetime):
+        mock_datetime.now.return_value = datetime(2024, 2, 1, 12, 0, 0)
+
+        reservation_id = 123
+        self.db_service.post_confirm_reservation(reservation_id)
+
+        _, actual_params = (
+            self.mock_db_handler.execute_query_and_fetch_result.call_args[0]
         )
 
-        result = self.db_service.get_all_reservations(client_id)
+        self.assertEqual(
+            (reservation_id, mock_datetime.now.return_value), actual_params
+        )
 
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0][3], "sample_code")
-        self.assertEqual(result[0][6], 20.0)
+    @patch("infrastructure.services.datetime")
+    def test_post_cancel_reservation(self, mock_datetime):
+        # Mock data
+        mock_datetime.now.return_value = datetime(2024, 2, 1, 12, 0, 0)
+
+        reservation_id = 123
+        mock_ticket_id = 456
+
+        self.mock_db_handler.execute_query_and_fetch_result.side_effect = [
+            [(mock_ticket_id,)],
+            None,
+        ]
+
+        self.db_service.post_cancel_reservation(reservation_id)
+
+        self.mock_db_handler.execute_query_and_fetch_result.assert_any_call(
+            """SELECT "ID" FROM "Ticket" WHERE "ReservationID"=%s""", (reservation_id,)
+        )
+
+    def test_get_client_by_email(self):
+        # Mock data
+        client_email = "test@example.com"
+        mock_client_data = [(1, "John", "Doe", client_email, 42, "123456789")]
+
+        self.mock_db_handler.execute_query_and_fetch_result.return_value = (
+            mock_client_data
+        )
+
+        result = self.db_service.get_client_by_email(client_email)
+
+        _, actual_params = (
+            self.mock_db_handler.execute_query_and_fetch_result.call_args[0]
+        )
+
+        self.assertEqual((client_email,), actual_params)
+        self.assertEqual(result, mock_client_data)
 
     def test_get_payment_services(self):
         mock_payments = [
