@@ -223,3 +223,13 @@ def get_programs_by_cinema(id):
         programs_data.append(program_dict)
     return programs_data
 
+
+@api.route("/room/<id>/cinema", methods=["GET"])
+def get_cinema_by_room(id):
+    from main import db_service
+
+    cinema = db_service.get_cinema_by_room(id)[0]
+    logger.info(f"Fetched cinema of id: {cinema}.")
+
+    return {"ID": cinema[0],"name": cinema[1], "address": cinema[2]}
+

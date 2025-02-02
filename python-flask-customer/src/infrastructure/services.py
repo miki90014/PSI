@@ -198,3 +198,24 @@ class DatabaseService:
         """
         return self.db_handler.execute_query_and_fetch_result(query)
     
+    def get_showings_by_movie_with_attandance(self, movieID):
+        query = f"""
+        SELECT 
+            s."ID", 
+            s."Date", 
+            s."RoomID", 
+            COALESCE(
+                ROUND(
+                    (COUNT(CASE WHEN a."ReservationID" IS NOT NULL THEN 1 END) * 100.0) 
+                    / NULLIF(COUNT(a."ID"), 0), 
+                    2
+                ), 
+                0.0
+            ) AS "Attendance"
+        FROM "Showing" s
+        LEFT JOIN "AvailableSeats" a ON s."ID" = a."ShowingID"
+        WHERE s."MovieID" = {movieID}
+        GROUP BY s."ID", s."Date", s."RoomID";
+        """
+        return self.db_handler.execute_query_and_fetch_result(query)
+    
