@@ -27,7 +27,7 @@ async function cancelReservation(reservationId) {
   }
 }
 
-export function TicketsView(accessToken) {
+export function TicketsView({ setAccessToken }) {
   const [reservations, setReservations] = useState([]);
   const [transactions, setTransactions] = useState([]);
   async function updateReservationsAfterChanges() {

@@ -278,11 +278,15 @@ body {
   font-weight: bold;
   margin: 10px 0 5px 0;
 }
-.register-form input {
+.register-form input:not([type="checkbox"]) {
   border-radius: 5px;
   padding: 4px;
   border-color: #ffffff;
   width: 100%;
+}
+.register-form input[type="checkbox"] {
+  margin-right: 10px;
+  accent-color: #221c11;
 }
 .register-form button {
   align-self: center;
