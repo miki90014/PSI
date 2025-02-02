@@ -3,16 +3,6 @@ resource "aws_api_gateway_rest_api" "cinema_api" {
   description = "REST API gateway for cinema app"
 }
 
-resource "aws_api_gateway_authorizer" "cinema_authorizer" {
-  name                             = "cinema-authorizer"
-  rest_api_id                      = aws_api_gateway_rest_api.cinema_api.id
-  authorizer_uri                   = "arn:aws:cognito-idp:us-east-1:${data.aws_caller_identity.current.account_id}:userpool/${aws_cognito_user_pool.cinema_user_pool.id}"
-  identity_source                  = "method.request.header.Authorization"
-  authorizer_result_ttl_in_seconds = 300
-  type                             = "COGNITO_USER_POOLS"
-  provider_arns                    = [aws_cognito_user_pool.cinema_user_pool.arn]
-}
-
 resource "aws_api_gateway_resource" "customer" {
   rest_api_id = aws_api_gateway_rest_api.cinema_api.id
   parent_id   = aws_api_gateway_rest_api.cinema_api.root_resource_id
@@ -23,8 +13,7 @@ resource "aws_api_gateway_method" "customer_method" {
   rest_api_id   = aws_api_gateway_rest_api.cinema_api.id
   resource_id   = aws_api_gateway_resource.customer.id
   http_method   = "ANY"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.cinema_authorizer.id
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "customer_integration" {
@@ -48,16 +37,15 @@ resource "aws_api_gateway_method" "employee_method" {
   rest_api_id   = aws_api_gateway_rest_api.cinema_api.id
   resource_id   = aws_api_gateway_resource.employee.id
   http_method   = "ANY"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.cinema_authorizer.id
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "employee_integration" {
   rest_api_id             = aws_api_gateway_rest_api.cinema_api.id
   resource_id             = aws_api_gateway_resource.employee.id
   http_method             = aws_api_gateway_method.employee_method.http_method
-  integration_http_method = "ANY"
   type                    = "HTTP_PROXY"
+  integration_http_method = "ANY"
   uri                     = "http://${aws_lb.cinema_alb.dns_name}/employee"
 
   depends_on = [aws_api_gateway_method.employee_method]
@@ -95,8 +83,7 @@ resource "aws_api_gateway_method" "proxy_method" {
   rest_api_id   = aws_api_gateway_rest_api.cinema_api.id
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
-  authorization = "COGNITO_USER_POOLS"
-  authorizer_id = aws_api_gateway_authorizer.cinema_authorizer.id
+  authorization = "NONE"
   request_parameters = {
     "method.request.path.proxy" = true
   }

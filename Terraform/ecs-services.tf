@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "backend-employee" {
   container_definitions = jsonencode([
     {
       name   = "backend-employee"
-      image  = "dockermaniac01/backend-cinema-image:20250201132918"
+      image  = "dockermaniac01/backend-cinema-image:20250202211613"
       cpu    = 512
       memory = 1024
 
@@ -63,7 +63,7 @@ resource "aws_ecs_task_definition" "backend-customer" {
   container_definitions = jsonencode([
     {
       name      = "backend-customer"
-      image     = "dockermaniac01/backend-cinema-image-customer:20250201125244"
+      image     = "dockermaniac01/backend-cinema-image-customer:20250202210802"
       cpu       = 512
       memory    = 1024
       essential = true
@@ -78,6 +78,7 @@ resource "aws_ecs_task_definition" "backend-customer" {
         { name = "POSTGRES_USER", value = var.rds_username },
         { name = "POSTGRES_PASSWORD", value = var.rds_password },
         { name = "POSTGRES_DB", value = var.rds_dbname_customer },
+        { name = "BACKEND_URL_EMPLOYEE", value = "http://cinema-alb-432990911.us-east-1.elb.amazonaws.com" }
       ]
       logConfiguration = {
         logDriver = "awslogs"
