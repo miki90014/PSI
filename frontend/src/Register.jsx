@@ -56,6 +56,10 @@ export function Register() {
             <label htmlFor="password">Hasło</label>
             <input type="password" placeholder="Hasło" value={password} onChange={(e) => setPassword(e.target.value)} />
             <br />
+            <p>
+              <input type="checkbox" id="terms" name="terms" required />
+              <label htmlFor="terms">Akceptuję Politykę prywatności</label>
+            </p>
             <div className="register-buttons">
               <button type="submit">Zarejestruj</button>
               <button type="button" className="back-to-login-btn" onClick={() => navigation("/client/login")}>

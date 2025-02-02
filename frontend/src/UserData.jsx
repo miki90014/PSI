@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { cognitoChangePassword, cognitoChangeUserAttributes, cognitoGetUserData } from "./cognito";
-import "./UserData.css";
 
-export function UserData({ accessToken }) {
+export function UserData({ accessToken, setAccessToken }) {
   const [names, setNames] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");

@@ -13,7 +13,7 @@ import { TicketsView } from "./TicketsView.jsx";
 import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./UserData.css";
+import "./AllInOne.css";
 import { Protected } from "./Protected.jsx";
 
 function Main() {
@@ -33,7 +33,7 @@ function Main() {
               path="userdata"
               element={
                 <Protected accessToken={accessToken}>
-                  <UserData accessToken={accessToken} />
+                  <UserData accessToken={accessToken} setAccessToken={setAccessToken} />
                 </Protected>
               }
             />
@@ -41,7 +41,7 @@ function Main() {
               path="reservations"
               element={
                 <Protected accessToken={accessToken}>
-                  <TicketsView accessToken={accessToken} />
+                  <TicketsView setAccessToken={setAccessToken} />
                 </Protected>
               }
             />
